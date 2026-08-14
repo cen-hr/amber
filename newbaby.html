@@ -78,11 +78,6 @@
   .backbtn.hidden{ visibility:hidden; }
   .topbar h2{ font-family:'Noto Serif TC', serif; font-size:17px; margin:0; font-weight:600; }
   .topbar .sub{ font-size:11.5px; color:#CFE3DC; margin-top:2px; letter-spacing:.03em; }
-  .crumbs{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
-  .crumb{
-    font-size:10.5px; background:rgba(255,255,255,0.14);
-    padding:3px 9px; border-radius:100px; color:#DDEEE7; letter-spacing:.02em;
-  }
 
   .screen-area{ flex:1; overflow-y:auto; background:#F7FAF8; padding:18px 16px 28px; }
   .screen-area::-webkit-scrollbar{ width:5px; }
@@ -131,6 +126,15 @@
   }
 
   .apply-block{ margin-top:16px; }
+  .prep-box{
+    background:#FFF8EC; border:1px solid var(--amber-soft); border-radius:14px;
+    padding:14px 16px; margin-top:16px;
+  }
+  .prep-box .pb-title{
+    font-size:12.5px; font-weight:700; color:#8A5A19; margin-bottom:8px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .prep-box ul{ margin:0; padding-left:18px; font-size:12px; color:#6b4f22; line-height:1.75; }
   .apply-label{
     font-size:11.5px; font-weight:700; color:var(--ink-soft);
     margin-bottom:6px; letter-spacing:.03em;
@@ -197,7 +201,6 @@
             <div class="sub" id="subText">快速找到您需要的資訊</div>
           </div>
         </div>
-        <div class="crumbs" id="crumbs"></div>
       </div>
       <div class="screen-area" id="screenArea"></div>
     </div>
@@ -241,7 +244,6 @@ const birthDetail = {
       {h:'產檢假', items:[
         '天數：<strong>7 天</strong>（可按日、半日或小時申請）',
         '薪資：雇主全額給付，不得扣發全勤獎金',
-        '前 5 天雇主負擔，第 6、7 天雇主可向勞保局申請薪資補助',
         '證明文件：媽媽手冊產檢紀錄頁，或醫院診斷證明'
       ]},
       {h:'產假', items:[
@@ -267,6 +269,7 @@ const birthDetail = {
         '適用期間：配偶妊娠產檢或分娩當日及前後共 15 日內',
         '薪資：雇主全額給付',
         '可按日、半日或小時申請',
+        '證明文件：配偶之產檢資料（媽媽手冊）或出生證明、生產證明文件',
         '同性婚姻配偶依法同樣適用'
       ]},
     ]
@@ -284,7 +287,7 @@ const birthDetail = {
       {h:'育嬰留職停薪津貼', items:[
         '金額：留停前 6 個月平均月投保薪資 <strong>80%</strong>（8 成薪）',
         '期間：每名子女父母各最長 6 個月，合計最長 12 個月',
-        '薪資補助與津貼合併發給，無須分開申請',
+        '育嬰留停津貼＝60% 基本津貼＋20% 加碼補助，一起發、只要申請一次',
         '留停期間若有其他工作收入，該月不得請領'
       ]},
     ]
@@ -298,19 +301,16 @@ function render(key){
   const backBtn = document.getElementById('backBtn');
   const titleText = document.getElementById('titleText');
   const subText = document.getElementById('subText');
-  const crumbs = document.getElementById('crumbs');
-
   backBtn.classList.toggle('hidden', history.length <= 1);
 
-  let crumbTrail = [];
   let html = '';
 
   if(key === 'birth_home'){
     titleText.textContent = '👶 生育相關';
-    subText.textContent = '快速找到您需要的資訊';
+    subText.textContent = '';
     html = `<div class="intro-card">
-      <h3>請選擇您目前的情況</h3>
-      <p>依照您現在遇到的情境，點選最貼近的選項。</p>
+      <h3>迎接新生命</h3>
+      <p>迎接新生命，是人生中一段特別而珍貴的旅程。無論是您即將成為父母，或是陪伴另一半迎接寶寶，我們都希望陪您安心度過這段重要的時光。我們整理了生育需要的相關資訊，讓您能更輕鬆地找到需要的內容。</p>
     </div>` + birthScenarios.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -323,8 +323,7 @@ function render(key){
     const d = birthDetail[key];
     const links = applyLinks[key];
     titleText.textContent = d.title;
-    subText.textContent = '知識說明';
-    crumbTrail = ['生育相關'];
+    subText.textContent = '';
     html = journeyHTML(d.step) +
       d.cards.map(c=>`
         <div class="info-card">
@@ -334,6 +333,15 @@ function render(key){
 
     if(links && links.online){
       html += `
+      <div class="prep-box">
+        <div class="pb-title">📋 上網申辦前，請先準備</div>
+        <ul>
+          <li>健保卡正本（本人的，卡片上未顯示「已註銷」）</li>
+          <li>本人申辦的手機門號（4G/5G 月租，非預付卡、非公司門號）— 供「手機認證」登入</li>
+          <li>或已申請「自然人憑證」＋讀卡機</li>
+          <li>身分證統一編號</li>
+        </ul>
+      </div>
       <div class="apply-block">
         <div class="apply-label">🟢 線上申請</div>
         <a class="apply-link online" href="${links.online.url}" target="_blank" rel="noopener">
@@ -357,7 +365,6 @@ function render(key){
     }
   }
 
-  crumbs.innerHTML = crumbTrail.map(c=>`<span class="crumb">${c}</span>`).join('');
   area.innerHTML = html;
   area.scrollTop = 0;
 }
