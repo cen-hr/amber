@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>員工停車場租用申請單｜賢德醫院</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif; background:#f5f5f0; color:#1a1a1a; min-height:100vh; padding:0 0 40px 0; }
+  .header { background:#1a1a1a; color:#fff; padding:28px 20px 22px; text-align:center; }
+  .header .hosp { font-size:13px; color:#aaa; letter-spacing:3px; margin-bottom:8px; }
+  .header h1 { font-size:20px; font-weight:700; letter-spacing:2px; line-height:1.4; }
+  .form-wrap { max-width:480px; margin:0 auto; padding:0 16px; }
+  .section { margin-top:24px; }
+  .section-title { font-size:11px; font-weight:700; letter-spacing:2px; color:#888; padding-bottom:8px; border-bottom:1.5px solid #1a1a1a; margin-bottom:14px; }
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:12px; color:#666; margin-bottom:5px; }
+  .field input[type="text"],.field input[type="tel"] { width:100%; padding:13px 14px; font-size:16px; font-family:inherit; color:#1a1a1a; background:#fff; border:1.5px solid #ddd; border-radius:6px; outline:none; -webkit-appearance:none; }
+  .field input:focus { border-color:#1a1a1a; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .check-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .check-item { display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid #ddd; border-radius:6px; padding:10px 16px; cursor:pointer; font-size:15px; user-select:none; }
+  .check-item input[type="checkbox"] { width:18px; height:18px; accent-color:#1a1a1a; }
+  .check-item:has(input:checked) { border-color:#1a1a1a; background:#f0f0eb; }
+  .info-box { background:#fff; border:1.5px solid #ddd; border-radius:6px; padding:14px 16px; font-size:14px; }
+  .info-box .date-val { font-size:18px; font-weight:700; margin-top:4px; }
+  .rules { background:#fff; border:1.5px solid #e0e0e0; border-radius:6px; overflow:hidden; }
+  .rule-item { padding:11px 14px; font-size:13px; line-height:1.6; color:#333; border-bottom:1px solid #eee; }
+  .rule-item:last-child { border-bottom:none; }
+  .rule-num { font-weight:700; color:#1a1a1a; margin-right:4px; }
+  .consent-box { background:#fff; border:1.5px solid #1a1a1a; border-radius:6px; padding:16px; font-size:14px; line-height:1.8; }
+  .sig-wrap { background:#fff; border:1.5px solid #ddd; border-radius:6px; overflow:hidden; }
+  .sig-label { font-size:12px; color:#888; padding:10px 14px 0; }
+  canvas#sigPad { display:block; width:100%; height:130px; cursor:crosshair; touch-action:none; }
+  .sig-actions { display:flex; justify-content:flex-end; padding:8px 12px; border-top:1px solid #eee; }
+  .btn-clear { font-size:12px; color:#888; background:none; border:none; cursor:pointer; padding:4px 8px; font-family:inherit; }
+  .submit-section { margin-top:30px; }
+  .note { font-size:12px; color:#888; text-align:center; line-height:1.7; margin-bottom:16px; }
+  .btn-submit { width:100%; padding:16px; font-size:16px; font-weight:700; letter-spacing:2px; font-family:inherit; color:#fff; background:#1a1a1a; border:none; border-radius:6px; cursor:pointer; }
+  .btn-submit:active { opacity:0.8; }
+  #toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.9); background:#c0392b; color:#fff; padding:16px 28px; border-radius:12px; font-size:16px; font-weight:700; opacity:0; transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:9999; text-align:center; max-width:80%; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+  #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #confirm-screen { display:none; position:fixed; inset:0; background:#fff; z-index:500; overflow-y:auto; padding:0 0 40px 0; }
+  #confirm-screen.show { display:block; }
+  .confirm-header { background:#1a1a1a; color:#fff; padding:20px; text-align:center; }
+  .confirm-header h2 { font-size:16px; font-weight:700; letter-spacing:2px; }
+  .confirm-header p { font-size:12px; color:#aaa; margin-top:4px; }
+  .confirm-body { max-width:480px; margin:0 auto; padding:16px; }
+  .confirm-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #eee; font-size:14px; }
+  .confirm-row .label { color:#888; flex-shrink:0; margin-right:12px; }
+  .confirm-row .value { color:#1a1a1a; font-weight:600; text-align:right; }
+  .confirm-actions { max-width:480px; margin:20px auto 0; padding:0 16px; display:flex; flex-direction:column; gap:10px; }
+  .btn-confirm { width:100%; padding:16px; font-size:16px; font-weight:700; letter-spacing:2px; font-family:inherit; color:#fff; background:#1a1a1a; border:none; border-radius:6px; cursor:pointer; }
+  .btn-back-confirm { width:100%; padding:14px; font-size:15px; font-family:inherit; color:#1a1a1a; background:#fff; border:1.5px solid #1a1a1a; border-radius:6px; cursor:pointer; }
+  #preview-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:600; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px 16px 30px; overflow-y:auto; }
+  #preview-overlay.show { display:flex; }
+  #preview-img { width:100%; max-width:480px; border-radius:8px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+  .preview-hint { color:#fff; font-size:14px; text-align:center; margin-top:18px; line-height:1.7; opacity:0.85; }
+  .btn-close-preview { margin-top:20px; padding:13px 32px; background:#fff; color:#1a1a1a; font-size:15px; font-weight:700; font-family:inherit; border:none; border-radius:6px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hosp">賢德醫院</div>
+  <h1>員工停車場<br>租用申請單</h1>
+</div>
+
+<div class="form-wrap">
+  <div class="section">
+    <div class="section-title">申請項目</div>
+    <div class="check-group">
+      <label class="check-item"><input type="checkbox" name="type" value="新申請">新申請</label>
+      <label class="check-item"><input type="checkbox" name="type" value="停租">停租</label>
+      <label class="check-item"><input type="checkbox" name="type" value="復租">復租</label>
+      <label class="check-item"><input type="checkbox" name="type" value="車牌異動">車牌異動</label>
+      <label class="check-item"><input type="checkbox" name="type" value="資料異動">資料異動</label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">申請人資料</div>
+    <div class="row2">
+      <div class="field"><label>姓名</label><input type="text" id="name" placeholder="請輸入姓名"></div>
+      <div class="field"><label>員工編號</label><input type="text" id="emp_id" placeholder="員工編號"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>單位／職稱</label><input type="text" id="dept" placeholder="例：護理部／護理師"></div>
+      <div class="field"><label>聯絡電話</label><input type="tel" id="phone" placeholder="手機號碼"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">車輛資料</div>
+    <div class="field"><label>車牌號碼</label><input type="text" id="plate" placeholder="例：ABC-1234" style="text-transform:uppercase"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">重要規範</div>
+    <div class="rules">
+      <div class="rule-item"><span class="rule-num">1．</span>月租費 NT$2,000／月，採薪資扣款，不因未使用而減免退費。</div>
+      <div class="rule-item"><span class="rule-num">2．</span>新申請及復租：次月 1 日起租。停租：以申請日為基準，次月起停止扣款。</div>
+      <div class="rule-item"><span class="rule-num">3．</span>月租為使用資格，不保證固定車位或隨時有空位。</div>
+      <div class="rule-item"><span class="rule-num">4．</span>禁止轉借、轉租或冒名使用，違者取消停車資格。</div>
+      <div class="rule-item"><span class="rule-num">5．</span>本院不負車輛保管責任；失竊、碰撞或天災損害本院不負賠償。</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">同意聲明</div>
+    <div class="consent-box">本人已詳讀上述規範，確認填寫資料正確無誤，並同意遵守以上各項規定，且同意由薪資中按月扣除停車費（NT$2,000）。</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">申請人簽名</div>
+    <div class="sig-wrap">
+      <div class="sig-label">請用手指在下方簽名</div>
+      <canvas id="sigPad"></canvas>
+      <div class="sig-actions"><button class="btn-clear" onclick="clearSig()">清除重簽</button></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">申請日期</div>
+    <div class="info-box">
+      <div class="date-val" id="apply_display"></div>
+      <div id="rent_start_display" style="font-size:14px;color:#16a34a;margin-top:6px;font-weight:600;"></div>
+    </div>
+  </div>
+
+  <div class="submit-section">
+    <p class="note">填妥並簽名後，點下方按鈕確認資料並送出</p>
+    <button class="btn-submit" onclick="showConfirm()">產生申請單 →</button>
+  </div>
+</div>
+
+<!-- 預覽確認畫面 -->
+<div id="confirm-screen">
+  <div class="confirm-header">
+    <h2>請確認申請資料</h2>
+    <p>確認無誤後再送出</p>
+  </div>
+  <div class="confirm-body" id="confirm-body"></div>
+  <div class="confirm-actions">
+    <button class="btn-confirm" onclick="confirmSubmit()">確認送出 →</button>
+    <button class="btn-back-confirm" onclick="backToForm()">返回修改</button>
+  </div>
+</div>
+
+<!-- 申請單圖片 -->
+<div id="preview-overlay">
+  <img id="preview-img" src="" alt="申請單預覽">
+  <p class="preview-hint">長按圖片儲存，或直接截圖<br>回傳至 LINE 即完成申請</p>
+  <button class="btn-close-preview" onclick="closePreview()">返回</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── 日期 ──────────────────────────────────────────────────────────────────
+function zeroPad(n){ return String(n).padStart(2,'0'); }
+
+var today = new Date();
+var applyDateStr = today.getFullYear() + '年' + zeroPad(today.getMonth()+1) + '月' + zeroPad(today.getDate()) + '日';
+var nextFirst = new Date(today.getFullYear(), today.getMonth()+1, 1);
+var rentStartStr = nextFirst.getFullYear() + '年' + zeroPad(nextFirst.getMonth()+1) + '月01日';
+
+document.getElementById('apply_display').textContent = applyDateStr;
+document.getElementById('rent_start_display').textContent = '起租日：' + rentStartStr;
+
+// ── 簽名 ──────────────────────────────────────────────────────────────────
+var sigCanvas = document.getElementById('sigPad');
+var ctx = sigCanvas.getContext('2d');
+var drawing = false;
+var hasSig = false;
+var _formData = {};
+
+function resizeCanvas(){
+  var rect = sigCanvas.getBoundingClientRect();
+  var dpr = window.devicePixelRatio || 1;
+  sigCanvas.width = rect.width * dpr;
+  sigCanvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e){
+  var rect = sigCanvas.getBoundingClientRect();
+  var src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+}
+sigCanvas.addEventListener('mousedown', function(e){ drawing=true; var p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+sigCanvas.addEventListener('mousemove', function(e){ if(!drawing)return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasSig=true; });
+sigCanvas.addEventListener('mouseup', function(){ drawing=false; });
+sigCanvas.addEventListener('mouseleave', function(){ drawing=false; });
+sigCanvas.addEventListener('touchstart', function(e){ e.preventDefault(); drawing=true; var p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
+sigCanvas.addEventListener('touchmove', function(e){ e.preventDefault(); if(!drawing)return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasSig=true; }, {passive:false});
+sigCanvas.addEventListener('touchend', function(){ drawing=false; });
+
+function clearSig(){ ctx.clearRect(0,0,sigCanvas.width,sigCanvas.height); hasSig=false; }
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+// ── 確認畫面 ──────────────────────────────────────────────────────────────
+function showConfirm(){
+  var name = document.getElementById('name').value.trim();
+  var emp_id = document.getElementById('emp_id').value.trim();
+  var dept = document.getElementById('dept').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var plate = document.getElementById('plate').value.trim();
+  var checkedTypes = Array.from(document.querySelectorAll('input[name="type"]:checked')).map(function(el){ return el.value; });
+
+  if(!name){ showToast('⚠️ 請填寫姓名'); return; }
+  if(checkedTypes.length===0){ showToast('⚠️ 請勾選申請項目'); return; }
+  if(!plate){ showToast('⚠️ 請填寫車牌號碼'); return; }
+  if(!hasSig){ showToast('⚠️ 請在簽名欄簽名'); return; }
+
+  var isStop = checkedTypes.indexOf('停租') !== -1;
+
+  _formData = {
+    types: checkedTypes.join('、'),
+    name: name,
+    emp_id: emp_id || '—',
+    dept: dept || '—',
+    phone: phone || '—',
+    plate: plate.toUpperCase(),
+    rentStart: rentStartStr,
+    stopDate: isStop ? rentStartStr : '—',
+    applyDate: applyDateStr
+  };
+
+  var rows = [
+    ['申請項目', _formData.types],
+    ['姓名', _formData.name],
+    ['員工編號', _formData.emp_id],
+    ['單位／職稱', _formData.dept],
+    ['聯絡電話', _formData.phone],
+    ['車牌號碼', _formData.plate],
+    ['起租日', _formData.rentStart],
+    ['停租生效日', _formData.stopDate],
+    ['申請日期', _formData.applyDate]
+  ];
+
+  document.getElementById('confirm-body').innerHTML = rows.map(function(r){
+    return '<div class="confirm-row"><span class="label">' + r[0] + '</span><span class="value">' + r[1] + '</span></div>';
+  }).join('');
+
+  document.getElementById('confirm-screen').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function backToForm(){
+  document.getElementById('confirm-screen').classList.remove('show');
+}
+
+function confirmSubmit(){
+  // 送到 Google 表單
+  var GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScDngcY1ObGDavvqnYZ5nsugJjDUu3JkOW5BgWqpKcE_-DPUA/viewform';
+  var params = new URLSearchParams({
+    'entry.1768833960': _formData.name,
+    'entry.715392463':  _formData.emp_id,
+    'entry.495202018':  _formData.dept,
+    'entry.506393223':  _formData.phone,
+    'entry.1018983212': _formData.plate,
+    'entry.731702299':  _formData.types,
+    'entry.1528980463': _formData.rentStart,
+    'entry.592021884':  _formData.stopDate === '—' ? '' : _formData.stopDate,
+    'entry.130869959':  _formData.applyDate
+  });
+  window.open(GOOGLE_FORM_URL + '?' + params.toString(), '_blank');
+
+  // 產生申請單圖片
+  document.getElementById('confirm-screen').classList.remove('show');
+  generateImage();
+}
+
+function generateImage(){
+  var sc = 2;
+  var W = 640;
+  var P = 32;
+  var rH = 44;
+  var oc = document.createElement('canvas');
+  oc.width = W * sc;
+  oc.height = 1200 * sc;
+  var x = oc.getContext('2d');
+  x.scale(sc, sc);
+  var font = "'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif";
+  var y = 0;
+
+  x.fillStyle = '#fff'; x.fillRect(0,0,W,1200);
+
+  // Header
+  x.fillStyle = '#1a1a1a'; x.fillRect(0,0,W,72);
+  x.fillStyle = '#aaa'; x.font = '13px ' + font; x.textAlign = 'center'; x.fillText('賢德醫院', W/2, 22);
+  x.fillStyle = '#fff'; x.font = 'bold 22px ' + font; x.fillText('員工停車場租用申請單', W/2, 52);
+  y = 72;
+
+  function sec(title){
+    y += 20;
+    x.textAlign = 'left'; x.font = 'bold 11px ' + font; x.fillStyle = '#888';
+    x.fillText(title, P, y+12);
+    x.strokeStyle = '#1a1a1a'; x.lineWidth = 1.5;
+    x.beginPath(); x.moveTo(P, y+18); x.lineTo(W-P, y+18); x.stroke();
+    y += 22;
+  }
+
+  function row(label, value, alt){
+    if(alt){ x.fillStyle='#f8f8f6'; x.fillRect(P,y,W-P*2,rH); }
+    x.fillStyle='#888'; x.font='11px '+font; x.textAlign='left'; x.fillText(label,P+12,y+16);
+    x.fillStyle='#1a1a1a'; x.font='15px '+font; x.fillText(value||'—',P+12,y+34);
+    x.strokeStyle='#eee'; x.lineWidth=0.5;
+    x.beginPath(); x.moveTo(P,y+rH); x.lineTo(W-P,y+rH); x.stroke();
+    y += rH;
+  }
+
+  function row2(l1,v1,l2,v2){
+    var half = (W-P*2)/2;
+    x.fillStyle='#888'; x.font='11px '+font; x.textAlign='left';
+    x.fillText(l1,P+12,y+16); x.fillText(l2,P+half+12,y+16);
+    x.fillStyle='#1a1a1a'; x.font='15px '+font;
+    x.fillText(v1||'—',P+12,y+34); x.fillText(v2||'—',P+half+12,y+34);
+    x.strokeStyle='#eee'; x.lineWidth=0.5;
+    x.beginPath(); x.moveTo(P+half,y+8); x.lineTo(P+half,y+rH-8); x.stroke();
+    x.beginPath(); x.moveTo(P,y+rH); x.lineTo(W-P,y+rH); x.stroke();
+    y += rH;
+  }
+
+  sec('申請項目'); row('勾選項目', _formData.types);
+  sec('申請人資料');
+  row2('姓名', _formData.name, '員工編號', _formData.emp_id);
+  row2('單位／職稱', _formData.dept, '聯絡電話', _formData.phone);
+  sec('車輛資料'); row('車牌號碼', _formData.plate);
+  sec('日期');
+  row('申請日期', _formData.applyDate);
+  row2('起租日', _formData.rentStart, '停租生效日', _formData.stopDate);
+
+  // 規範
+  sec('重要規範');
+  var rules = [
+    '1. 月租費 NT$2,000／月，採薪資扣款，不因未使用而退費。',
+    '2. 新申請及復租：次月1日起租。停租：以申請日為基準，次月起停扣。',
+    '3. 月租為使用資格，不保證固定車位或隨時有空位。',
+    '4. 禁止轉借、轉租或冒名使用，違者取消停車資格。',
+    '5. 本院不負車輛保管責任；失竊、碰撞或天災損害不負賠償。'
+  ];
+  for(var i=0; i<rules.length; i++){
+    if(i%2===0){ x.fillStyle='#f8f8f6'; x.fillRect(P,y,W-P*2,28); }
+    x.fillStyle='#444'; x.font='12px '+font; x.textAlign='left'; x.fillText(rules[i],P+12,y+18);
+    y += 28;
+  }
+  y += 10;
+
+  // 同意聲明
+  sec('同意聲明');
+  x.fillStyle='#f8f8f6'; x.fillRect(P,y,W-P*2,60);
+  x.strokeStyle='#1a1a1a'; x.lineWidth=1; x.strokeRect(P,y,W-P*2,60);
+  x.fillStyle='#1a1a1a'; x.font='12.5px '+font; x.textAlign='left';
+  x.fillText('本人已詳讀上述規範，確認填寫資料正確無誤，',P+14,y+22);
+  x.fillText('並同意遵守各項規定，且同意由薪資中按月扣除停車費（NT$2,000）。',P+14,y+44);
+  y += 60;
+
+  // 簽名
+  sec('申請人簽名');
+  var sigW = W-P*2;
+  var sigH = 110;
+  x.fillStyle='#fff'; x.fillRect(P,y,sigW,sigH);
+  x.strokeStyle='#1a1a1a'; x.lineWidth=1; x.strokeRect(P,y,sigW,sigH);
+  x.drawImage(sigCanvas, 0, 0, sigCanvas.width, sigCanvas.height, P, y, sigW, sigH);
+  y += sigH + 20;
+
+  // Footer
+  x.strokeStyle='#ddd'; x.lineWidth=1;
+  x.beginPath(); x.moveTo(P,y); x.lineTo(W-P,y); x.stroke();
+  y += 16;
+  x.fillStyle='#aaa'; x.font='11px '+font; x.textAlign='center';
+  x.fillText('如有疑問請洽人事室，分機 163、169', W/2, y);
+  y += 24;
+
+  // Trim and show
+  var trimmed = document.createElement('canvas');
+  trimmed.width = W * sc;
+  trimmed.height = y * sc;
+  trimmed.getContext('2d').drawImage(oc, 0, 0);
+
+  document.getElementById('preview-img').src = trimmed.toDataURL('image/png');
+  document.getElementById('preview-overlay').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function closePreview(){
+  document.getElementById('preview-overlay').classList.remove('show');
+}
+</script>
+</body>
+</html>
