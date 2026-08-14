@@ -277,11 +277,12 @@ function confirmSubmit(){
     'entry.592021884':  _formData.stopDate === '—' ? '' : _formData.stopDate,
     'entry.130869959':  _formData.applyDate
   });
-  window.open(GOOGLE_FORM_URL + '?' + params.toString(), '_blank');
-
-  // 產生申請單圖片
+  // 先產生圖片，再開 Google 表單
   document.getElementById('confirm-screen').classList.remove('show');
   generateImage();
+  setTimeout(function(){
+    window.open(GOOGLE_FORM_URL + '?' + params.toString(), '_blank');
+  }, 800);
 }
 
 function generateImage(){
