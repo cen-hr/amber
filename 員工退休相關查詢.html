@@ -90,6 +90,15 @@
   .intro-card.warm p{ color:#6b5432; line-height:1.75; }
 
   .choice-box{ margin-top:18px; }
+  .calc-card select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Noto Sans TC', sans-serif; font-size:13px; color:var(--ink);
+    background:#FBFCFB; margin-top:4px;
+  }
+  .calc-note{
+    margin:12px 0 0; padding:12px 14px; background:#F1F7F3; border-radius:12px;
+    font-size:12.5px; color:var(--ink); line-height:1.7;
+  }
   .choice-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; text-align:center; }
   .choice-btn{
     width:100%; display:flex; align-items:center; gap:12px;
@@ -347,6 +356,13 @@ const retireDetail = {
         '換過工作、在其他單位也有加保：年資會<strong>累計併計</strong>，不會因為換公司歸零',
         '建議申請前先上勞保局查詢個人實際加保紀錄，避免以為滿15年結果只能領一次金'
       ]},
+      {h:'💡 提前領還是延後領？', items:[
+        '提前領（60–64歲）：每提前1年減4%，最多提前5年、減20%',
+        '延後領（66–70歲）：每延後1年增4%，最多延後5年、增20%；延後期間完全沒有年金可領',
+        '概略損益平衡點：<strong>60歲 vs 65歲</strong>約在 <strong>85歲</strong>打平——活到85歲以前，提前領總額較高；活過85歲，65歲領較划算',
+        '<strong>65歲 vs 70歲</strong>約在 <strong>95歲</strong>打平——除非有把握活到95歲以上，數學上不一定划算',
+        '沒有標準答案：健康狀況、家族壽命、退休後是否有其他收入或立即資金需求，都要一併考慮，這只是概估參考'
+      ]},
     ]
   },
   retire_pension:{
@@ -368,6 +384,30 @@ const retireDetail = {
 
 let history = ['retire_home'];
 let checkResult = null;
+
+function calcBreakeven(){
+  const sel = document.getElementById('claimAgeSelect');
+  const box = document.getElementById('breakevenResult');
+  if(!sel || !box) return;
+  const age = parseInt(sel.value, 10);
+  let html;
+  if(age === 65){
+    html = `<p class="calc-note">65歲是正常請領年齡，沒有增減——這是所有試算的比較基準。</p>`;
+  } else if(age < 65){
+    const yearsEarly = 65 - age;
+    const reduce = yearsEarly * 4;
+    const breakeven = Math.round((65-age)/ (reduce/100) + age);
+    html = `<p class="calc-note">${age}歲請領，每月金額<strong>減少 ${reduce}%</strong>。<br>
+      概略損益平衡點約在 <strong>${breakeven} 歲</strong>——活到這個歲數以前，${age}歲提前領總額比較高；活過這個歲數，等到65歲領反而更划算。</p>`;
+  } else {
+    const yearsLate = age - 65;
+    const increase = yearsLate * 4;
+    const breakeven = Math.round((age-65)/(increase/100) + age);
+    html = `<p class="calc-note">${age}歲請領，每月金額<strong>增加 ${increase}%</strong>，但等待期間完全沒有年金收入。<br>
+      概略損益平衡點約在 <strong>${breakeven} 歲</strong>——除非有把握活到這個歲數以上，數學上不一定比65歲正常請領划算。</p>`;
+  }
+  box.innerHTML = html;
+}
 
 function calcAge(birth, ref){
   let age = ref.getFullYear() - birth.getFullYear();
@@ -451,7 +491,7 @@ function render(key){
     subText.textContent = '';
     html = `<div class="intro-card warm">
       <h3>謝謝您這些年為醫院付出的時間與心力</h3>
-      <p>退休不是結束，而是人生另一個階段的開始 <br> 祝福您接下來的生活，有更多時間留給自己 <br> 我們將陪您 完成退休相關手續。</p>
+      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休手續。</p>
     </div>` + entryPaths.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -528,6 +568,30 @@ function render(key){
           <h4>${c.h}</h4>
           <ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>
         </div>`).join('');
+
+    if(key === 'retire_bli'){
+      html += `
+      <div class="info-card calc-card">
+        <h4>🧮 我想試算看看</h4>
+        <div class="form-row">
+          <label>如果我打算幾歲開始領？</label>
+          <select id="claimAgeSelect" onchange="calcBreakeven()">
+            <option value="60">60歲（提前5年）</option>
+            <option value="61">61歲（提前4年）</option>
+            <option value="62">62歲（提前3年）</option>
+            <option value="63">63歲（提前2年）</option>
+            <option value="64">64歲（提前1年）</option>
+            <option value="65" selected>65歲（正常請領）</option>
+            <option value="66">66歲（延後1年）</option>
+            <option value="67">67歲（延後2年）</option>
+            <option value="68">68歲（延後3年）</option>
+            <option value="69">69歲（延後4年）</option>
+            <option value="70">70歲（延後5年）</option>
+          </select>
+        </div>
+        <div id="breakevenResult"></div>
+      </div>`;
+    }
 
     if(links && links.online && links.onsite){
       html += `
@@ -607,6 +671,7 @@ function render(key){
   }
   area.innerHTML = html;
   area.scrollTop = 0;
+  if(key === 'retire_bli'){ calcBreakeven(); }
 }
 
 function journeyHTML(step){
