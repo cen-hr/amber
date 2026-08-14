@@ -459,7 +459,7 @@ function render(key){
     subText.textContent = '';
     html = `<div class="intro-card warm">
       <h3>謝謝您這些年為醫院付出的時間與心力</h3>
-      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休手續。</p>
+      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休相關手續。</p>
     </div>` + entryPaths.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -489,7 +489,7 @@ function render(key){
     crumbTrail = ['退休相關'];
     html = `<div class="intro-card">
       <h3>填寫兩組日期就好</h3>
-      <p>僅供初步參考，正式資格與年資仍以人事室核定、勞保局資料為準。</p>
+      <p>僅供初步參考，正式資格與年資仍以勞保局資料為準。</p>
     </div>
     <div class="info-card">
       <h4>📋 出生年月日</h4>
@@ -525,7 +525,7 @@ function render(key){
           <div class="t2">${r.t2}</div>
         </div>
         <div class="chev">›</div>
-      </div>`).join('') + `<div class="footnote">結果為初步估算，實際核定請以人事室與勞保局為準</div>`;
+      </div>`).join('') + `<div class="footnote">結果為初步估算，實際核定請以勞保局為準</div>`;
   }
 
   else if(retireDetail[key]){
@@ -577,8 +577,8 @@ function render(key){
       <div class="prep-box">
         <div class="pb-title">🟢 線上辦，請先準備</div>
         <ul>
-          <li>健保卡正本（本人的，卡片上未顯示「已註銷」）</li>
-          <li>本人申辦的手機門號（4G/5G 月租，非預付卡、非公司門號）— 供「手機認證」登入</li>
+          <li>本人健保卡正本（卡片上未顯示「已註銷」）</li>
+          <li>本人名下手機門號（非預付卡，供「手機認證」登入</li>
           <li>或已申請「自然人憑證」＋讀卡機</li>
           <li>身分證統一編號</li>
         </ul>
