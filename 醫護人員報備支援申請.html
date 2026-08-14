@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>醫護人員報備支援申請</title>
+<style>
+  :root{
+    --bg:#F5F7F7; --card:#FFFFFF; --ink:#1E2A2A; --muted:#5B6B6B;
+    --line:#DCE3E2; --teal:#0F6F64; --teal-deep:#0B4F47; --teal-tint:#E4F2EF;
+    --error:#B3413A; --error-tint:#FBEAE8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    -webkit-font-smoothing:antialiased;padding-bottom:60px;}
+  header{background:var(--teal-deep);color:#fff;padding:28px 20px 22px;}
+  header .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#9FD4C9;margin:0 0 6px;}
+  header h1{margin:0;font-size:21px;font-weight:700;line-height:1.4;}
+  main{max-width:560px;margin:-14px auto 0;padding:0 16px;}
+  .card{background:var(--card);border-radius:14px;
+    box-shadow:0 1px 3px rgba(15,50,45,.08), 0 8px 24px rgba(15,50,45,.06);
+    padding:20px 18px;margin-bottom:16px;}
+  .card h2{font-size:14px;color:var(--teal-deep);margin:0 0 14px;font-weight:700;
+    display:flex;align-items:center;gap:8px;}
+  .card h2 .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px;}
+  label .req{color:var(--error);margin-left:2px;}
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  input[type=text],input[type=date],input[type=file],select,textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+    font-size:15px;color:var(--ink);background:#fff;font-family:inherit;}
+  input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+  input,select,textarea,button{accent-color:var(--teal);}
+  textarea{resize:vertical;min-height:64px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .hidden{display:none;}
+  .custom-org{margin-top:10px;}
+
+  .typeGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .typeCard{border:1.5px solid var(--line);border-radius:11px;padding:14px 12px;
+    cursor:pointer;background:#fff;text-align:left;color:var(--ink);-webkit-appearance:none;appearance:none;}
+  .typeCard.active{border-color:var(--teal);background:var(--teal-tint);}
+  .typeCard .t{font-size:14px;font-weight:700;margin-top:4px;line-height:1.4;color:inherit;}
+
+  .dategrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  .dategrid label{margin:0;border:1px solid var(--line);border-radius:8px;text-align:center;
+    padding:8px 0;font-size:13px;color:var(--ink);cursor:pointer;background:#fff;}
+  .dategrid input{display:none;}
+  .dategrid label:has(input:checked){background:var(--teal);border-color:var(--teal);color:#fff;}
+
+  #entries{display:flex;flex-direction:column;gap:14px;}
+  .entry{position:relative;padding:16px 14px 14px 44px;border:1px solid var(--line);
+    border-radius:11px;background:#FBFCFC;}
+  .entry .badge{position:absolute;left:12px;top:16px;width:22px;height:22px;border-radius:6px;
+    background:var(--teal);color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;}
+  .entry .row2{margin-bottom:0;}
+  .entry .remove{position:absolute;right:10px;top:10px;border:none;background:none;
+    color:var(--muted);font-size:13px;cursor:pointer;padding:4px 6px;}
+  .entry .remove:hover{color:var(--error);}
+  .entry.invalid{border-color:var(--error);background:var(--error-tint);}
+  #addBtn{margin-top:14px;width:100%;padding:11px;border:1.5px dashed var(--teal);color:var(--teal);
+    background:#fff;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;}
+  #addBtn:hover{background:var(--teal-tint);}
+  #addBtn:disabled{opacity:.4;cursor:not-allowed;}
+  .count{font-size:12px;color:var(--muted);margin-top:8px;text-align:center;}
+
+  #submitBtn{width:100%;padding:14px;background:var(--teal);color:#fff;border:none;
+    border-radius:11px;font-size:16px;font-weight:700;cursor:pointer;}
+  #submitBtn:hover{background:var(--teal-deep);}
+  #submitBtn:disabled{opacity:.5;cursor:not-allowed;}
+
+  #msg{max-width:560px;margin:0 auto 16px;padding:0 16px;font-size:14px;}
+  #msg .box{padding:12px 14px;border-radius:10px;line-height:1.6;}
+  #msg .ok{background:var(--teal-tint);color:var(--teal-deep);border:1px solid var(--teal);}
+  #msg .err{background:var(--error-tint);color:var(--error);border:1px solid var(--error);}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">醫護人員報備支援申請</p>
+  <h1 id="pageTitle">請選擇報備類型</h1>
+</header>
+
+<main>
+  <form id="reportForm">
+
+    <div class="card">
+      <h2><span class="dot"></span>報備類型</h2>
+      <div class="typeGrid">
+        <button type="button" class="typeCard" data-type="single"><div class="t">單一日期<br>單一時段</div></button>
+        <button type="button" class="typeCard" data-type="multiday"><div class="t">多日<br>同時段</div></button>
+        <button type="button" class="typeCard" data-type="multientry"><div class="t">多筆不同<br>日期時段</div></button>
+        <button type="button" class="typeCard" data-type="upload"><div class="t">整月班表<br>上傳</div></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span>基本資料</h2>
+      <div class="row2">
+        <div class="field">
+          <label>員工編號<span class="req">*</span></label>
+          <input type="text" id="empId" required>
+        </div>
+        <div class="field">
+          <label>姓名<span class="req">*</span></label>
+          <input type="text" id="empName" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>機構<span class="req">*</span></label>
+        <select id="org" required>
+          <option value="" disabled selected>請選擇機構</option>
+          <option value="明德醫院附設精神護理之家|7303190022">明德醫院附設精神護理之家</option>
+          <option value="賢德醫院附設護理之家|7403190024">賢德醫院附設護理之家</option>
+          <option value="大明護理之家|7436191031">大明護理之家</option>
+          <option value="宜昌居家護理所|7403190088">宜昌居家護理所</option>
+          <option value="林新醫院|917070029">林新醫院</option>
+          <option value="毓祥護理之家|7417021121">毓祥護理之家</option>
+          <option value="潤康護理之家|7403190051">潤康護理之家</option>
+          <option value="台中市私立孝親園老人長期照顧中心|7836091178">台中市私立孝親園老人長期照顧中心</option>
+          <option value="台中市私立永春老人長期照顧中心|9Y17080033">台中市私立永春老人長期照顧中心</option>
+          <option value="松群護理之家|7636181039">松群護理之家</option>
+          <option value="其他">其他（自行輸入）</option>
+        </select>
+        <div class="custom-org hidden" id="customOrgWrap">
+          <div class="row2">
+            <div class="field"><label>機構名稱</label><input type="text" id="customOrgName"></div>
+            <div class="field"><label>機構代號</label><input type="text" id="customOrgCode"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card sectionType hidden" data-section="single">
+      <h2><span class="dot"></span>報備日期與時間</h2>
+      <div class="row2">
+        <div class="field"><label>報備日期<span class="req">*</span></label><input type="date" id="s_date"></div>
+        <div class="field"><label>時間<span class="req">*</span></label><input type="text" id="s_time" placeholder="08:00-12:00"></div>
+      </div>
+    </div>
+
+    <div class="card sectionType hidden" data-section="multiday">
+      <h2><span class="dot"></span>報備日期（可複選）</h2>
+      <div class="dategrid" id="dateGrid"></div>
+      <div class="field" style="margin-top:16px;">
+        <label>時間（全部日期統一套用）<span class="req">*</span></label>
+        <input type="text" id="m_time" placeholder="08:00-12:00">
+      </div>
+    </div>
+
+    <div class="card sectionType hidden" data-section="multientry">
+      <h2><span class="dot"></span>報備日期與時間（可新增多筆）</h2>
+      <div id="entries"></div>
+      <button type="button" id="addBtn">＋ 新增一筆</button>
+      <p class="count" id="countLabel">已新增 1／15 筆</p>
+    </div>
+
+    <div class="card sectionType hidden" data-section="upload">
+      <h2><span class="dot"></span>上傳班表</h2>
+      <div class="field">
+        <label>班表檔案（圖片或PDF）<span class="req">*</span></label>
+        <input type="file" id="u_file" accept="image/*,.pdf">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot"></span>備註</h2>
+      <div class="field"><textarea id="remark" placeholder="選填"></textarea></div>
+    </div>
+
+    <button type="submit" id="submitBtn">送出報備</button>
+  </form>
+</main>
+
+<div id="msg"></div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbsECoeAPxolPvdD7mMkV-iJRaH-uLhy5Pd7JueX9pVChJn5ESEcINzizyG64NEp1ctg/exec"
+
+const titles = {
+  single: "單一日期單一時段",
+  multiday: "多日同時段",
+  multientry: "多筆不同日期時段",
+  upload: "整月班表上傳"
+};
+let currentType = null;
+
+document.querySelectorAll('.typeCard').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.typeCard').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentType = btn.dataset.type;
+    document.getElementById('pageTitle').textContent = titles[currentType];
+    document.querySelectorAll('.sectionType').forEach(sec => {
+      sec.classList.toggle('hidden', sec.dataset.section !== currentType);
+    });
+  });
+});
+
+const dateGrid = document.getElementById('dateGrid');
+for (let d = 1; d <= 31; d++) {
+  const label = document.createElement('label');
+  label.innerHTML = `<input type="checkbox" value="${d}"><span>${d}</span>`;
+  dateGrid.appendChild(label);
+}
+
+const MAX_ENTRIES = 15;
+const entriesWrap = document.getElementById('entries');
+const addBtn = document.getElementById('addBtn');
+const countLabel = document.getElementById('countLabel');
+let entryCount = 0;
+
+function timeInvalid(v){
+  return v.trim() !== "" && !/^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/.test(v.trim());
+}
+function addEntry(){
+  if (entryCount >= MAX_ENTRIES) return;
+  entryCount++;
+  const div = document.createElement('div');
+  div.className = 'entry';
+  div.innerHTML = `
+    <div class="badge">${entryCount}</div>
+    <button type="button" class="remove">移除</button>
+    <div class="row2">
+      <div class="field"><label>日期<span class="req">*</span></label><input type="date" class="entryDate"></div>
+      <div class="field"><label>時間<span class="req">*</span></label><input type="text" class="entryTime" placeholder="08:00-12:00"></div>
+    </div>`;
+  entriesWrap.appendChild(div);
+  div.querySelector('.remove').addEventListener('click', () => { div.remove(); renumber(); });
+  updateCount();
+}
+function renumber(){
+  entryCount = 0;
+  [...entriesWrap.children].forEach(div => {
+    entryCount++;
+    div.querySelector('.badge').textContent = entryCount;
+  });
+  updateCount();
+}
+function updateCount(){
+  countLabel.textContent = `已新增 ${entryCount}／${MAX_ENTRIES} 筆`;
+  addBtn.disabled = entryCount >= MAX_ENTRIES;
+}
+addBtn.addEventListener('click', addEntry);
+addEntry();
+
+const orgSelect = document.getElementById('org');
+const customOrgWrap = document.getElementById('customOrgWrap');
+orgSelect.addEventListener('change', () => {
+  customOrgWrap.classList.toggle('hidden', orgSelect.value !== '其他');
+});
+
+function showMsg(text, ok){
+  document.getElementById('msg').innerHTML = `<div class="box ${ok ? 'ok' : 'err'}">${text}</div>`;
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('reportForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  document.getElementById('msg').innerHTML = '';
+
+  if (!currentType) { showMsg('請先選擇報備類型。', false); return; }
+
+  const empId = document.getElementById('empId').value.trim();
+  const empName = document.getElementById('empName').value.trim();
+  if (!empId || !empName) { showMsg('請填寫員工編號與姓名。', false); return; }
+
+  let orgName = '', orgCode = '';
+  if (orgSelect.value === '其他') {
+    orgName = document.getElementById('customOrgName').value.trim();
+    orgCode = document.getElementById('customOrgCode').value.trim();
+    if (!orgName || !orgCode) { showMsg('請填寫「其他」機構的名稱與代號。', false); return; }
+  } else if (orgSelect.value) {
+    [orgName, orgCode] = orgSelect.value.split('|');
+  } else {
+    showMsg('請選擇機構。', false); return;
+  }
+
+  const remark = document.getElementById('remark').value.trim();
+  const payload = { type: currentType, empId, empName, orgName, orgCode, remark };
+
+  if (currentType === 'single') {
+    const date = document.getElementById('s_date').value;
+    const time = document.getElementById('s_time').value.trim();
+    if (!date || !time || timeInvalid(time)) { showMsg('請確認日期與時間格式正確（如 08:00-12:00）。', false); return; }
+    payload.rows = [{ date, time }];
+  }
+  else if (currentType === 'multiday') {
+    const checked = [...dateGrid.querySelectorAll('input:checked')].map(i => i.value);
+    const time = document.getElementById('m_time').value.trim();
+    if (checked.length === 0 || !time || timeInvalid(time)) { showMsg('請至少勾選一天，並確認時間格式正確。', false); return; }
+    payload.rows = checked.map(d => ({ date: d, time }));
+  }
+  else if (currentType === 'multientry') {
+    const rows = [];
+    let hasInvalid = false;
+    [...entriesWrap.children].forEach(div => {
+      const date = div.querySelector('.entryDate').value;
+      const time = div.querySelector('.entryTime').value.trim();
+      div.classList.remove('invalid');
+      if (!date || !time || timeInvalid(time)) { div.classList.add('invalid'); hasInvalid = true; }
+      else rows.push({ date, time });
+    });
+    if (hasInvalid || rows.length === 0) { showMsg('請確認每一筆日期與時間都已正確填寫。', false); return; }
+    payload.rows = rows;
+  }
+  else if (currentType === 'upload') {
+    const fileInput = document.getElementById('u_file');
+    if (!fileInput.files.length) { showMsg('請選擇要上傳的班表檔案。', false); return; }
+    const file = fileInput.files[0];
+    payload.fileName = file.name;
+    payload.fileMime = file.type;
+    payload.fileData = await fileToBase64(file);
+  }
+
+  if (APPS_SCRIPT_URL.indexOf('http') !== 0) { showMsg('尚未設定後台連結，請聯絡系統管理者。', false); return; }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '送出中…';
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.result === 'success') {
+      showMsg('送出成功，已收到您的報備。', true);
+      document.getElementById('reportForm').reset();
+      document.querySelectorAll('.typeCard').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sectionType').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('pageTitle').textContent = '請選擇報備類型';
+      currentType = null;
+      entriesWrap.innerHTML = ''; entryCount = 0; addEntry();
+      dateGrid.querySelectorAll('input:checked').forEach(i => i.checked = false);
+      customOrgWrap.classList.add('hidden');
+    } else {
+      showMsg('送出失敗，請稍後再試一次。', false);
+    }
+  } catch (err) {
+    showMsg('連線失敗，請確認網路後再試一次。', false);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = '送出報備';
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特休試算工具</title>
+<style>
+  :root{
+    --ink:#1f2b24;
+    --paper:#f6f4ee;
+    --line:#2f6a4f;
+    --line-soft:#dce7de;
+    --accent:#2f6a4f;
+    --accent-soft:#e4efe7;
+    --muted:#6b7570;
+    --warn:#b5541f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    padding:0 0 40px;
+  }
+  header{
+    padding:28px 20px 22px;
+    border-bottom:2px solid var(--line);
+    background:var(--paper);
+  }
+  header .eyebrow{
+    font-size:12px;
+    letter-spacing:.12em;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  header h1{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  header p{
+    margin:8px 0 0;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .panel{
+    max-width:560px;
+    margin:0 auto;
+    padding:0 20px;
+  }
+  .input-row{
+    margin-top:22px;
+    background:#fff;
+    border:1px solid var(--line-soft);
+    border-radius:10px;
+    padding:16px;
+  }
+  .input-row label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:8px;
+    color:var(--ink);
+  }
+  .input-row input[type="date"],
+  .input-row input[type="number"]{
+    width:100%;
+    padding:10px 12px;
+    font-size:16px;
+    border:1px solid #b9c6bd;
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  .today-note{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .type-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .type-toggle button{
+    flex:1;
+    padding:9px 8px;
+    font-size:13.5px;
+    font-weight:600;
+    border:1px solid #b9c6bd;
+    border-radius:8px;
+    background:#fff;
+    color:var(--muted);
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .type-toggle button.active{
+    background:var(--line);
+    border-color:var(--line);
+    color:#fff;
+  }
+  .hours-row{
+    margin-top:12px;
+    display:none;
+  }
+  .hours-row.show{ display:block; }
+  .hours-row .hint{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:6px;
+    line-height:1.6;
+  }
+  .hours-mode-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .hours-mode-toggle button{
+    flex:1;
+    padding:7px 8px;
+    font-size:12.5px;
+    font-weight:600;
+    border:1px solid #b9c6bd;
+    border-radius:8px;
+    background:#fff;
+    color:var(--muted);
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .hours-mode-toggle button.active{
+    background:var(--accent-soft);
+    border-color:var(--line);
+    color:var(--line);
+  }
+  #result{ margin-top:20px; }
+  .status-card{
+    background:var(--accent-soft);
+    border:1px solid var(--line-soft);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .status-card .label{
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.04em;
+  }
+  .status-card .value{
+    font-size:20px;
+    font-weight:700;
+    color:var(--accent);
+    margin-top:4px;
+  }
+  .status-card .sub{
+    font-size:12.5px;
+    color:var(--ink);
+    margin-top:6px;
+    line-height:1.6;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border:1px solid var(--line-soft);
+    border-radius:10px;
+    overflow:hidden;
+    font-size:13.5px;
+  }
+  thead th{
+    background:var(--line);
+    color:#fff;
+    text-align:left;
+    padding:9px 10px;
+    font-weight:600;
+    font-size:12.5px;
+  }
+  tbody td{
+    padding:9px 10px;
+    border-top:1px solid var(--line-soft);
+    vertical-align:top;
+  }
+  tbody tr.current{
+    background:var(--accent-soft);
+  }
+  tbody tr.current td:first-child{
+    font-weight:700;
+    position:relative;
+  }
+  tbody tr.current td:first-child::before{
+    content:"●";
+    color:var(--accent);
+    margin-right:5px;
+    font-size:9px;
+  }
+  .days{
+    font-weight:700;
+    color:var(--accent);
+  }
+  .deadline-warn{
+    color:var(--warn);
+    font-weight:600;
+  }
+  .note{
+    margin-top:16px;
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.7;
+    border-top:1px dashed var(--line-soft);
+    padding-top:14px;
+  }
+  .placeholder{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    padding:30px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">人事室 · 自助試算</div>
+  <h1>特休天數試算</h1>
+  <p>輸入到職日，自動列出每年特休天數的產生日與建議使用期限。試算結果僅供參考，實際天數與制度以人事室公告及勞動基準法為準。</p>
+</header>
+
+<div class="panel">
+  <div class="input-row">
+    <label>身份別</label>
+    <div class="type-toggle">
+      <button type="button" id="btnFull" class="active">全職</button>
+      <button type="button" id="btnPart">兼職（比例計算）</button>
+    </div>
+
+    <label for="hireDate">到職日</label>
+    <input type="date" id="hireDate">
+
+    <div class="hours-row" id="hoursRow">
+      <label for="pastHours">近6個月合計工作時數（小時）</label>
+      <input type="number" id="pastHours" min="0" step="1" placeholder="例如：520">
+      <div class="hint" id="avgHint"></div>
+      <div class="hint">兼職特休天數 = 全職對應天數 ×（平均每週工作時數 ÷ 40），未滿半日以半日計、半日以上未滿1日以1日計。平均每週工作時數以「特休起算日前6個月合計工作時數 ÷ 26.07週」換算。</div>
+    </div>
+
+    <div class="today-note" id="todayNote"></div>
+  </div>
+
+  <div id="result">
+    <div class="placeholder">請選擇到職日，開始試算</div>
+  </div>
+
+  <div class="note">
+    計算依據：勞動基準法第38條特休天數級距（6個月3日、1年7日、2年10日、3～5年每年14日、5～10年每年15日、10年以上每年加1日，加至30日為止）。兼職人員依勞動部規定按比例計算：兼職特休天數＝全職對應天數 ×（平均每週工作時數 ÷ 40），未滿半日以半日計，半日以上未滿1日以1日計。使用期限原則為「取得日起1年內」，請提醒同仁務必於期限前排休完畢，避免特休到期未使用。
+  </div>
+</div>
+
+<script>
+const hireInput = document.getElementById('hireDate');
+const result = document.getElementById('result');
+const todayNote = document.getElementById('todayNote');
+const btnFull = document.getElementById('btnFull');
+const btnPart = document.getElementById('btnPart');
+const hoursRow = document.getElementById('hoursRow');
+const pastHoursInput = document.getElementById('pastHours');
+const avgHint = document.getElementById('avgHint');
+
+const WEEKS_IN_6_MONTHS = 26.07;
+
+let employmentType = 'full'; // 'full' | 'part'
+
+const today = new Date();
+today.setHours(0,0,0,0);
+todayNote.textContent = '今天：' + fmt(today);
+
+btnFull.addEventListener('click', () => {
+  employmentType = 'full';
+  btnFull.classList.add('active');
+  btnPart.classList.remove('active');
+  hoursRow.classList.remove('show');
+  render(hireInput.value);
+});
+btnPart.addEventListener('click', () => {
+  employmentType = 'part';
+  btnPart.classList.add('active');
+  btnFull.classList.remove('active');
+  hoursRow.classList.add('show');
+  render(hireInput.value);
+});
+pastHoursInput.addEventListener('input', () => {
+  updateAvgHint();
+  render(hireInput.value);
+});
+
+function updateAvgHint(){
+  const total = parseFloat(pastHoursInput.value) || 0;
+  const avg = total / WEEKS_IN_6_MONTHS;
+  avgHint.textContent = total > 0 ? ('換算平均每週工作時數約 ' + avg.toFixed(1) + ' 小時') : '';
+}
+
+function currentWeeklyHours(){
+  const total = parseFloat(pastHoursInput.value) || 0;
+  return total / WEEKS_IN_6_MONTHS;
+}
+
+function roundUpHalfDay(x){
+  return Math.ceil(x * 2) / 2;
+}
+
+function formatDaysLabel(d){
+  return (Number.isInteger(d) ? d : d.toFixed(1)) + ' 天';
+}
+
+function fmt(d){
+  return d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0');
+}
+
+function addMonths(date, months){
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+function daysForTenureYears(y){
+  // y = 完整滿年數 (0.5 表示滿6個月未滿1年)
+  if(y < 0.5) return 0;
+  if(y < 1) return 3;
+  if(y < 2) return 7;
+  if(y < 3) return 10;
+  if(y < 5) return 14;
+  if(y < 10) return 15;
+  const over = 16 + (Math.floor(y) - 10);
+  return Math.min(over, 30);
+}
+
+function render(hireDateStr){
+  if(!hireDateStr){
+    result.innerHTML = '<div class="placeholder">請選擇到職日，開始試算</div>';
+    return;
+  }
+  const hire = new Date(hireDateStr);
+  hire.setHours(0,0,0,0);
+
+  // 建立各級距的起算點：6個月, 1年, 2年, 3年...20年
+  const milestones = [
+    {label:'滿6個月', months:6, y:0.5},
+  ];
+  for(let y=1; y<=20; y++){
+    milestones.push({label:'滿' + y + '年', months:y*12, y:y});
+  }
+
+  const weeklyHours = currentWeeklyHours();
+  const ratio = employmentType === 'part' ? Math.min(weeklyHours / 40, 1) : 1;
+
+  const rows = milestones.map(m => {
+    const grantDate = addMonths(hire, m.months);
+    const nextMilestone = milestones[milestones.indexOf(m)+1];
+    const deadlineBase = nextMilestone ? addMonths(hire, nextMilestone.months) : addMonths(grantDate,12);
+    const deadlineExtended = addMonths(deadlineBase, 12);
+    const fullDays = daysForTenureYears(m.y);
+    const days = employmentType === 'part' ? roundUpHalfDay(fullDays * ratio) : fullDays;
+    return {label:m.label, grantDate, deadlineBase, deadlineExtended, fullDays, days};
+  }).filter(r => r.fullDays > 0);
+
+  // 找出目前所處區間
+  let currentIndex = -1;
+  rows.forEach((r,i) => {
+    if(today >= r.grantDate && (!rows[i+1] || today < rows[i+1].grantDate)){
+      currentIndex = i;
+    }
+  });
+
+  let html = '';
+
+  if(today < hire){
+    html += '<div class="status-card"><div class="label">狀態</div><div class="value">尚未到職</div><div class="sub">到職日為 ' + fmt(hire) + '，到職滿6個月後開始產生特休。</div></div>';
+  } else if(currentIndex >= 0){
+    const cur = rows[currentIndex];
+    const daysLeftToDeadline = Math.round((cur.deadlineBase - today) / 86400000);
+    html += '<div class="status-card">';
+    html += '<div class="label">目前年資區間' + (employmentType === 'part' ? '（兼職・比例計算）' : '') + '</div>';
+    html += '<div class="value">' + cur.label + '起・' + formatDaysLabel(cur.days) + '特休</div>';
+    if(employmentType === 'part'){
+      html += '<div class="sub">全職對應天數 ' + cur.fullDays + ' 天 × 比例 ' + ratio.toFixed(2) + '（平均每週 ' + weeklyHours.toFixed(1) + ' 小時 ÷ 40）＝ ' + formatDaysLabel(cur.days) + '</div>';
+    }
+    html += '<div class="sub">產生日：' + fmt(cur.grantDate) + '　｜　建議使用期限：' + fmt(cur.deadlineBase);
+    if(daysLeftToDeadline >= 0 && daysLeftToDeadline <= 60){
+      html += '　<span class="deadline-warn">（剩 ' + daysLeftToDeadline + ' 天，請提醒同仁盡快排休）</span>';
+    }
+    html += '</div>';
+    html += '<div class="sub">請提醒同仁務必於 ' + fmt(cur.deadlineBase) + ' 前休畢，避免特休到期未使用。</div>';
+    html += '</div>';
+  }
+
+  html += '<table><thead><tr><th>年資</th><th>產生日</th><th>' + (employmentType === 'part' ? '全職天數' : '天數') + '</th>';
+  if(employmentType === 'part') html += '<th>兼職天數</th>';
+  html += '<th>建議使用期限</th></tr></thead><tbody>';
+  rows.forEach((r,i) => {
+    const isCurrent = i === currentIndex;
+    html += '<tr class="' + (isCurrent ? 'current' : '') + '">';
+    html += '<td>' + r.label + '</td>';
+    html += '<td>' + fmt(r.grantDate) + '</td>';
+    html += '<td' + (employmentType === 'part' ? '' : ' class="days"') + '>' + r.fullDays + ' 天</td>';
+    if(employmentType === 'part'){
+      html += '<td class="days">' + formatDaysLabel(r.days) + '</td>';
+    }
+    html += '<td>' + fmt(r.deadlineBase) + '</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+
+  result.innerHTML = html;
+}
+
+hireInput.addEventListener('change', () => render(hireInput.value));
+</script>
+
+</body>
+</html>

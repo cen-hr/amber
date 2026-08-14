@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生育相關 · 員工服務</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2B29;
+    --ink-soft:#4C5C59;
+    --bg:#EEF3F0;
+    --paper:#FFFFFF;
+    --line:#DCE4E0;
+    --teal:#1F5C56;
+    --teal-deep:#153F3B;
+    --sage:#7FA694;
+    --amber:#C98A2C;
+    --amber-soft:#F3E2C2;
+    --shadow: 0 8px 24px rgba(21,63,59,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #E3EEE8 0%, transparent 60%),
+      radial-gradient(1000px 500px at 100% 10%, #EAF1EC 0%, transparent 55%),
+      var(--bg);
+    font-family:'Noto Sans TC', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px 80px;
+  }
+  .stage{
+    width:100%;
+    max-width:600px;
+    display:grid;
+    gap:22px;
+  }
+  .stage-header{ text-align:center; }
+  .stage-header .eyebrow{
+    font-size:12.5px; letter-spacing:.16em; color:var(--teal);
+    font-weight:700; text-transform:uppercase;
+  }
+  .stage-header h1{
+    font-family:'Noto Serif TC', serif; font-size:24px; margin:6px 0 2px; color:var(--teal-deep);
+  }
+  .stage-header p{ margin:0; color:var(--ink-soft); font-size:13.5px; }
+
+  .phone-wrap{ display:flex; justify-content:center; }
+  .phone{
+    width:390px; max-width:100%; height:780px;
+    background:var(--paper); border-radius:38px;
+    box-shadow: var(--shadow), 0 0 0 10px #0F2E2A;
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .notch{
+    position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    width:120px; height:22px; background:#0F2E2A; border-radius:14px; z-index:30;
+  }
+  .topbar{
+    background:linear-gradient(180deg, var(--teal) 0%, var(--teal-deep) 100%);
+    color:#EFF6F3; padding:34px 18px 14px; position:relative; z-index:10;
+  }
+  .topbar .row{ display:flex; align-items:center; gap:10px; min-height:26px; }
+  .backbtn{
+    width:30px;height:30px; border-radius:50%;
+    background:rgba(255,255,255,0.12); border:none; color:#fff;
+    display:flex;align-items:center;justify-content:center; cursor:pointer;
+    font-size:16px; flex:0 0 auto; transition:background .15s ease;
+  }
+  .backbtn:hover{ background:rgba(255,255,255,0.22); }
+  .backbtn.hidden{ visibility:hidden; }
+  .topbar h2{ font-family:'Noto Serif TC', serif; font-size:17px; margin:0; font-weight:600; }
+  .topbar .sub{ font-size:11.5px; color:#CFE3DC; margin-top:2px; letter-spacing:.03em; }
+  .crumbs{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .crumb{
+    font-size:10.5px; background:rgba(255,255,255,0.14);
+    padding:3px 9px; border-radius:100px; color:#DDEEE7; letter-spacing:.02em;
+  }
+
+  .screen-area{ flex:1; overflow-y:auto; background:#F7FAF8; padding:18px 16px 28px; }
+  .screen-area::-webkit-scrollbar{ width:5px; }
+  .screen-area::-webkit-scrollbar-thumb{ background:#C9D8D2; border-radius:10px; }
+
+  .intro-card{
+    background:linear-gradient(135deg, #FFFFFF 0%, #F1F7F3 100%);
+    border:1px solid var(--line); border-radius:18px; padding:16px 16px; margin-bottom:14px;
+  }
+  .intro-card h3{ font-family:'Noto Serif TC', serif; margin:0 0 6px; font-size:15.5px; color:var(--teal-deep); }
+  .intro-card p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; }
+
+  .list-row{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:13px 14px; display:flex; align-items:center; gap:12px; margin-bottom:9px;
+    cursor:pointer; transition:border-color .15s ease, transform .15s ease;
+  }
+  .list-row:hover{ border-color:var(--sage); transform:translateX(2px); }
+  .list-row .ic{ font-size:20px; flex:0 0 auto; }
+  .list-row .txt{ flex:1; }
+  .list-row .txt .t1{ font-size:13.5px; font-weight:700; color:var(--ink); }
+  .list-row .txt .t2{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .list-row .chev{ color:var(--sage); font-size:14px; }
+
+  .journey{ display:flex; align-items:center; gap:4px; margin:2px 0 16px; padding:0 2px; }
+  .journey .stop{ flex:1; text-align:center; }
+  .journey .dot{
+    width:26px;height:26px; border-radius:50%; background:var(--paper);
+    border:2px solid var(--sage); display:flex;align-items:center;justify-content:center;
+    margin:0 auto 4px; font-size:13px;
+  }
+  .journey .stop.active .dot{ background:var(--amber); border-color:var(--amber); }
+  .journey .stop .lab{ font-size:10px; color:var(--ink-soft); }
+  .journey .bar{ flex:0 0 20px; height:2px; background:var(--line); margin-top:-16px; }
+
+  .info-card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:15px 16px; margin-bottom:12px; }
+  .info-card h4{
+    margin:0 0 8px; font-size:14.5px; font-family:'Noto Serif TC', serif; color:var(--teal-deep);
+    display:flex; align-items:center; gap:6px;
+  }
+  .info-card ul{ margin:0; padding-left:18px; font-size:12.5px; color:var(--ink-soft); line-height:1.7; }
+  .info-card ul li strong{ color:var(--ink); }
+  .tag{
+    display:inline-block; font-size:10px; background:var(--amber-soft); color:#8A5A19;
+    padding:2px 8px; border-radius:100px; margin-left:6px; font-weight:700; vertical-align:middle;
+  }
+
+  .apply-block{ margin-top:16px; }
+  .apply-label{
+    font-size:11.5px; font-weight:700; color:var(--ink-soft);
+    margin-bottom:6px; letter-spacing:.03em;
+  }
+  .apply-link{
+    display:flex; align-items:center; gap:10px;
+    border-radius:14px; padding:13px 14px; margin-bottom:8px;
+    text-decoration:none; transition:transform .15s ease, filter .15s ease;
+  }
+  .apply-link:hover{ transform:translateY(-2px); }
+  .apply-link.online{ background:var(--teal); color:#fff; }
+  .apply-link.online .al-sub{ color:#CFE3DC; }
+  .apply-link.form{ background:#fff; border:1.5px solid var(--teal); color:var(--teal-deep); }
+  .apply-link.form .al-sub{ color:var(--ink-soft); }
+  .apply-link .al-text{ flex:1; display:flex; flex-direction:column; gap:2px; }
+  .apply-link .al-main{ font-size:13px; font-weight:700; line-height:1.4; }
+  .apply-link .al-sub{ font-size:10.5px; font-weight:400; }
+  .apply-link .al-arrow{ font-size:15px; font-weight:700; flex:0 0 auto; }
+
+  .closed-box{
+    background:#FBF3EC; border:1px dashed #B4655C; border-radius:16px;
+    padding:22px 18px; text-align:center; margin-top:8px;
+  }
+  .closed-box .ic{ font-size:26px; margin-bottom:8px; }
+  .closed-box p{ margin:0 0 14px; font-size:12.5px; color:var(--ink-soft); line-height:1.7; }
+  .contact-btn{
+    background:#B4655C; color:#fff; border:none; padding:11px 22px;
+    border-radius:100px; font-size:12.5px; font-weight:700; cursor:pointer;
+  }
+  .stub-box{
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:22px 18px; text-align:center; color:var(--ink-soft); font-size:12px;
+  }
+  .stub-box .ic{ font-size:24px; margin-bottom:6px; display:block; }
+
+  .footnote{ text-align:center; font-size:10.5px; color:#9AAEA8; margin-top:18px; line-height:1.6; }
+  .panel-note{ max-width:390px; margin:0 auto; font-size:12px; color:var(--ink-soft); text-align:center; line-height:1.7; }
+  .panel-note b{ color:var(--teal-deep); }
+
+  @media (max-width:460px){
+    .phone{ border-radius:0; height:100vh; box-shadow:none; }
+    body{ padding:0; }
+    .notch{ display:none; }
+    .stage-header{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-header">
+    <div class="eyebrow">HR SERVICE MENU · 生育相關</div>
+    <h1>👶 生育相關</h1>
+    <p>快速找到您需要的資訊</p>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="topbar">
+        <div class="row">
+          <button class="backbtn hidden" id="backBtn" onclick="goBack()">‹</button>
+          <div>
+            <h2 id="titleText">👶 生育相關</h2>
+            <div class="sub" id="subText">快速找到您需要的資訊</div>
+          </div>
+        </div>
+        <div class="crumbs" id="crumbs"></div>
+      </div>
+      <div class="screen-area" id="screenArea"></div>
+    </div>
+  </div>
+
+  <div class="panel-note">按上方手機畫面操作即可預覽點擊路徑：<b>生育相關首頁 → 情境選擇 → 知識說明 → 辦理方式</b></div>
+</div>
+
+<script>
+const birthScenarios = [
+  {ic:'🤰', t1:'我懷孕了', t2:'產檢假・產假・生育給付', key:'birth_pregnant'},
+  {ic:'🤵', t1:'我要陪伴太太產檢／生產', t2:'陪產檢及陪產假', key:'birth_partner'},
+  {ic:'👶', t1:'我正在育兒／準備育嬰留停', t2:'育嬰留職停薪・育嬰留停津貼', key:'birth_parenting'},
+];
+
+const applyLinks = {
+  birth_pregnant: {
+    online:{ label:'勞保局 e 化服務系統', url:'https://edesk.bli.gov.tw/me/#/home', note:'登入後選擇「生育給付」申辦' },
+    forms:[
+      {name:'生育給付申請書', url:'https://www.bli.gov.tw/0102857.html'},
+      {name:'同意投保單位代為線上申辦同意書', url:'https://www.bli.gov.tw/0103894.html'},
+    ]
+  },
+  birth_partner: {
+    note:'陪產檢及陪產假由雇主直接核給薪資，<strong>無須向勞保局申請給付</strong>，僅需填寫院內請假單即可。'
+  },
+  birth_parenting: {
+    online:{ label:'勞保局 e 化服務系統', url:'https://edesk.bli.gov.tw/me/#/home', note:'登入後選擇「就保育嬰留職停薪津貼」申辦' },
+    forms:[
+      {name:'育嬰留職停薪津貼及續保申請書', url:'https://www.bli.gov.tw/0103423.html'},
+      {name:'育嬰留職停薪津貼申請書（書表及範例）', url:'https://www.bli.gov.tw/0015022.html'},
+    ]
+  },
+};
+
+const birthDetail = {
+  birth_pregnant: {
+    step:1,
+    title:'🤰 我懷孕了',
+    cards:[
+      {h:'產檢假', items:[
+        '天數：<strong>7 天</strong>（可按日、半日或小時申請）',
+        '薪資：雇主全額給付，不得扣發全勤獎金',
+        '前 5 天雇主負擔，第 6、7 天雇主可向勞保局申請薪資補助',
+        '證明文件：媽媽手冊產檢紀錄頁，或醫院診斷證明'
+      ]},
+      {h:'產假', items:[
+        '資格：懷孕滿 20 週以上',
+        '天數：產前產後合計 <strong>8 週</strong>',
+        '薪資：年資滿 6 個月全薪；未滿 6 個月半薪',
+        '期間職位保留，不得以懷孕分娩為由資遣'
+      ]},
+      {h:'生育給付（勞保）<span class="tag">2026新制</span>', items:[
+        '資格：加保滿 280 天後分娩，或滿 181 天後早產',
+        '金額：前 6 個月平均月投保薪資 × 2 個月',
+        '2026 年起：不足 10 萬元者，政府補足差額至合計 <strong>10 萬元</strong>',
+        '申請期限：生產日起 5 年內'
+      ]},
+    ]
+  },
+  birth_partner: {
+    step:2,
+    title:'🤵 我要陪伴太太產檢／生產',
+    cards:[
+      {h:'陪產檢及陪產假', items:[
+        '天數：合計 <strong>7 天</strong>（產檢陪同＋陪產共用，非各 7 天）',
+        '適用期間：配偶妊娠產檢或分娩當日及前後共 15 日內',
+        '薪資：雇主全額給付',
+        '可按日、半日或小時申請',
+        '同性婚姻配偶依法同樣適用'
+      ]},
+    ]
+  },
+  birth_parenting: {
+    step:3,
+    title:'👶 我正在育兒／準備育嬰留停',
+    cards:[
+      {h:'育嬰留職停薪', items:[
+        '資格：任職滿 6 個月，子女滿 3 歲前皆可申請',
+        '申請方式：未滿 6 個月者最多分 2 次；6 個月以上不限次數',
+        '2026 年新制：可用「日」為單位彈性申請（每胎最長 30 日），需提前 5 日告知',
+        '期間職位保留，年資併計'
+      ]},
+      {h:'育嬰留職停薪津貼', items:[
+        '金額：留停前 6 個月平均月投保薪資 <strong>80%</strong>（8 成薪）',
+        '期間：每名子女父母各最長 6 個月，合計最長 12 個月',
+        '薪資補助與津貼合併發給，無須分開申請',
+        '留停期間若有其他工作收入，該月不得請領'
+      ]},
+    ]
+  },
+};
+
+let history = ['birth_home'];
+
+function render(key){
+  const area = document.getElementById('screenArea');
+  const backBtn = document.getElementById('backBtn');
+  const titleText = document.getElementById('titleText');
+  const subText = document.getElementById('subText');
+  const crumbs = document.getElementById('crumbs');
+
+  backBtn.classList.toggle('hidden', history.length <= 1);
+
+  let crumbTrail = [];
+  let html = '';
+
+  if(key === 'birth_home'){
+    titleText.textContent = '👶 生育相關';
+    subText.textContent = '快速找到您需要的資訊';
+    html = `<div class="intro-card">
+      <h3>請選擇您目前的情況</h3>
+      <p>依照您現在遇到的情境，點選最貼近的選項。</p>
+    </div>` + birthScenarios.map(s=>`
+      <div class="list-row" onclick="go('${s.key}')">
+        <div class="ic">${s.ic}</div>
+        <div class="txt"><div class="t1">${s.t1}</div><div class="t2">${s.t2}</div></div>
+        <div class="chev">›</div>
+      </div>`).join('');
+  }
+
+  else if(birthDetail[key]){
+    const d = birthDetail[key];
+    const links = applyLinks[key];
+    titleText.textContent = d.title;
+    subText.textContent = '知識說明';
+    crumbTrail = ['生育相關'];
+    html = journeyHTML(d.step) +
+      d.cards.map(c=>`
+        <div class="info-card">
+          <h4>${c.h}</h4>
+          <ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+        </div>`).join('');
+
+    if(links && links.online){
+      html += `
+      <div class="apply-block">
+        <div class="apply-label">🟢 線上申請</div>
+        <a class="apply-link online" href="${links.online.url}" target="_blank" rel="noopener">
+          <span class="al-text"><span class="al-main">${links.online.label}</span><span class="al-sub">${links.online.note}</span></span>
+          <span class="al-arrow">↗</span>
+        </a>
+      </div>
+      <div class="apply-block">
+        <div class="apply-label">📄 表單下載</div>
+        ${links.forms.map(f=>`
+          <a class="apply-link form" href="${f.url}" target="_blank" rel="noopener">
+            <span class="al-text"><span class="al-main">${f.name}</span></span>
+            <span class="al-arrow">↓</span>
+          </a>`).join('')}
+      </div>`;
+    } else if(links && links.note){
+      html += `<div class="closed-box" style="border-color:var(--sage);background:#F1F7F3;">
+        <div class="ic">ℹ️</div>
+        <p>${links.note}</p>
+      </div>`;
+    }
+  }
+
+  crumbs.innerHTML = crumbTrail.map(c=>`<span class="crumb">${c}</span>`).join('');
+  area.innerHTML = html;
+  area.scrollTop = 0;
+}
+
+function journeyHTML(step){
+  const labels = ['懷孕','陪產','育兒'];
+  return `<div class="journey">` + labels.map((l,i)=>{
+    const idx = i+1;
+    return `<div class="stop ${idx===step?'active':''}"><div class="dot">${idx===step?'●':idx}</div><div class="lab">${l}</div></div>` +
+      (i < labels.length-1 ? `<div class="bar"></div>` : '');
+  }).join('') + `</div>`;
+}
+
+function go(key){
+  history.push(key);
+  render(key);
+}
+function goBack(){
+  if(history.length>1){
+    history.pop();
+    render(history[history.length-1]);
+  }
+}
+
+render('birth_home');
+</script>
+</body>
+</html>
