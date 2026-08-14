@@ -196,8 +196,8 @@ function submitForm(){
     applyDate: applyStr
   };
 
-  // 送到 Google 表單
-  var URL = 'https://docs.google.com/forms/d/e/1FAIpQLScDngcY1ObGDavvqnYZ5nsugJjDUu3JkOW5BgWqpKcE_-DPUA/viewform';
+  // 送到 Google 表單（背景送出，不開新分頁）
+  var FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScDngcY1ObGDavvqnYZ5nsugJjDUu3JkOW5BgWqpKcE_-DPUA/formResponse';
   var p = new URLSearchParams({
     'entry.1768833960': gFormData.name,
     'entry.715392463':  gFormData.emp_id,
@@ -209,7 +209,12 @@ function submitForm(){
     'entry.592021884':  gFormData.stopDate === '—' ? '' : gFormData.stopDate,
     'entry.130869959':  gFormData.applyDate
   });
-  window.open(URL + '?' + p.toString(), '_blank');
+  fetch(FORM_ACTION, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: p.toString()
+  });
 
   // 顯示簽名畫面
   document.getElementById('sig-screen').classList.add('show');
