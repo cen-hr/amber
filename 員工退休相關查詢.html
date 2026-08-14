@@ -124,6 +124,15 @@
   }
 
   .apply-block{ margin-top:16px; }
+  .prep-box{
+    background:#FFF8EC; border:1px solid var(--amber-soft); border-radius:14px;
+    padding:14px 16px; margin-top:16px;
+  }
+  .prep-box .pb-title{
+    font-size:12.5px; font-weight:700; color:#8A5A19; margin-bottom:8px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .prep-box ul{ margin:0; padding-left:18px; font-size:12px; color:#6b4f22; line-height:1.75; }
   .apply-label{ font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.03em; }
   .apply-link{
     display:flex; align-items:center; gap:10px; border-radius:14px; padding:13px 14px;
@@ -139,6 +148,37 @@
   .apply-link .al-sub{ font-size:10.5px; font-weight:400; }
   .apply-link .al-arrow{ font-size:15px; font-weight:700; flex:0 0 auto; }
 
+  .form-row{ margin-bottom:12px; }
+  .form-row label{ display:block; font-size:12px; color:var(--ink-soft); margin-bottom:5px; font-weight:500; }
+  .form-row input{
+    width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Noto Sans TC', sans-serif; font-size:13.5px; color:var(--ink);
+    background:#FBFCFB;
+  }
+  .form-row input:focus{ outline:none; border-color:var(--teal); }
+  .date-row{ display:flex; gap:8px; margin-bottom:4px; }
+  .date-field{ flex:1; }
+  .date-field label{ display:block; font-size:11px; color:var(--ink-soft); margin-bottom:5px; font-weight:500; text-align:center; }
+  .date-field input{
+    width:100%; padding:10px 6px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Noto Sans TC', sans-serif; font-size:14px; color:var(--ink);
+    background:#FBFCFB; text-align:center;
+  }
+  .date-field input:focus{ outline:none; border-color:var(--teal); }
+  .check-btn{
+    width:100%; margin-top:4px; background:var(--teal); color:#fff; border:none;
+    border-radius:12px; padding:12px; font-size:13.5px; font-weight:700; cursor:pointer;
+    font-family:'Noto Sans TC', sans-serif; transition:filter .15s ease;
+  }
+  .check-btn:hover{ filter:brightness(1.08); }
+  .status{
+    display:inline-block; font-size:10px; font-weight:700; padding:2px 8px;
+    border-radius:100px; margin-left:6px; vertical-align:middle;
+  }
+  .status.ok{ background:#E1F0E5; color:#1F7A3F; }
+  .status.no{ background:#FBEFE7; color:#B4655C; }
+  .status.na{ background:#EEF0EF; color:#8A9490; }
+
   .closed-box{
     background:#F1F7F3; border:1px dashed var(--sage); border-radius:16px;
     padding:22px 18px; text-align:center; margin-top:8px;
@@ -147,6 +187,14 @@
   .closed-box p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.7; }
 
   .footnote{ text-align:center; font-size:10.5px; color:#9AAEA8; margin-top:18px; line-height:1.6; }
+  .back-full{
+    display:block; width:100%; margin-top:20px; background:#fff;
+    border:1.5px solid var(--line); color:var(--teal-deep);
+    border-radius:14px; padding:12px; font-size:13px; font-weight:700;
+    font-family:'Noto Sans TC', sans-serif; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .back-full:hover{ border-color:var(--teal); background:#F1F7F3; }
   .panel-note{ max-width:390px; margin:0 auto; font-size:12px; color:var(--ink-soft); text-align:center; line-height:1.7; }
   .panel-note b{ color:var(--teal-deep); }
 
@@ -183,10 +231,15 @@
     </div>
   </div>
 
-  <div class="panel-note">按上方手機畫面操作即可預覽點擊路徑：<b>退休相關首頁 → 情境選擇 → 知識說明 → 辦理方式</b></div>
+  <div class="panel-note">按上方手機畫面操作即可預覽點擊路徑：<b>退休相關首頁 → 先確認資格或直接查看 → 知識說明 → 辦理方式</b></div>
 </div>
 
 <script>
+const entryPaths = [
+  {ic:'🔍', t1:'我想先確認自己符合哪些資格', t2:'輸入出生年月日與到職年月日，快速自我檢測', key:'retire_check'},
+  {ic:'📝', t1:'我已經知道要辦哪一項，直接看', t2:'退休金・老年給付・個人專戶', key:'retire_list'},
+];
+
 const retireScenarios = [
   {ic:'🎂', t1:'我符合退休資格了（舊制退休金）', t2:'退休資格・退休金計算・應備文件', key:'retire_company'},
   {ic:'💼', t1:'我要請領勞保老年給付', t2:'請領資格・給付方式・應備文件', key:'retire_bli'},
@@ -216,7 +269,7 @@ const retireDetail = {
     step:1,
     title:'🎂 我符合退休資格了（舊制退休金）',
     cards:[
-      {h:'適用對象？<span class="tag">舊制年資</span>', items:[
+      {h:'這張卡片適用誰？<span class="tag">舊制年資</span>', items:[
         '適用對象：<strong>2005 年勞退新制上路前</strong>的工作年資（或選擇繼續適用舊制者）',
         '2005 年後的年資，改看「📂 勞退新制個人專戶」那張卡片，兩者互不影響'
       ]},
@@ -247,6 +300,12 @@ const retireDetail = {
         '可提前最多 5 年請領（60 歲起，每提前 1 年減給 4%），亦可延後最多 5 年（每延後 1 年增給 4%）',
         '98 年 1 月 1 日勞保年金施行前已有勞保年資者，才可選擇「一次請領老年給付」'
       ]},
+      {h:'⚠️ 年資務必以勞保局紀錄為準<span class="tag">重要</span>', items:[
+        '保險年資＝實際投保天數加總，<strong>不是</strong>從第一次加保到現在的時間長度',
+        '如果中途曾待業、出國、自營工作等空窗未加保，年資會比想像中少',
+        '換過工作、在其他單位也有加保：年資會<strong>累計併計</strong>，不會因為換公司歸零',
+        '建議申請前先上勞保局查詢個人實際加保紀錄，避免以為滿15年結果只能領一次金'
+      ]},
       {h:'應備文件', items:[
         '身分證明文件（核對用）',
         '存摺封面影本',
@@ -273,6 +332,74 @@ const retireDetail = {
 };
 
 let history = ['retire_home'];
+let checkResult = null;
+
+function calcAge(birth, ref){
+  let age = ref.getFullYear() - birth.getFullYear();
+  const hadBirthday = (ref.getMonth() > birth.getMonth()) ||
+    (ref.getMonth() === birth.getMonth() && ref.getDate() >= birth.getDate());
+  if(!hadBirthday) age--;
+  return age;
+}
+
+function runCheck(){
+  const bY = parseInt(document.getElementById('birthY').value, 10);
+  const bM = parseInt(document.getElementById('birthM').value, 10);
+  const bD = parseInt(document.getElementById('birthD').value, 10);
+  const jY = parseInt(document.getElementById('joinY').value, 10);
+  const jM = parseInt(document.getElementById('joinM').value, 10);
+  const jD = parseInt(document.getElementById('joinD').value, 10);
+
+  if(!bY || !bM || !bD || !jY || !jM || !jD){
+    alert('請完整填寫出生年月日與到職年月日（皆為西元年）');
+    return;
+  }
+
+  const birthDate = new Date(bY, bM-1, bD);
+  const joinDate = new Date(jY, jM-1, jD);
+  const today = new Date();
+
+  const age = calcAge(birthDate, today);
+  const years = calcAge(joinDate, today);
+  const cutoff = new Date(2005, 6, 1);
+  const hasOld = joinDate < cutoff;
+
+  let oldRow;
+  if(!hasOld){
+    oldRow = { key:'retire_company', ic:'🎂', t1:'舊制退休金', ok:null,
+      badge:'不適用', t2:'2005年7月後到職，無舊制年資，退休金已全數在勞退新制專戶' };
+  } else {
+    const eligible = (years>=15 && age>=55) || years>=25 || (years>=10 && age>=60) || age>=65;
+    oldRow = { key:'retire_company', ic:'🎂', t1:'舊制退休金', ok:eligible,
+      badge: eligible ? '已符合' : '尚未符合',
+      t2: eligible ? '符合自請退休資格，可直接申請' : '尚未達 15年+55歲／25年不限／10年+60歲／65歲強制 任一條件' };
+  }
+
+  let bliRow;
+  if(age>=65){
+    bliRow = { key:'retire_bli', ic:'💼', t1:'勞保老年給付', ok:true, badge:'已符合',
+      t2:'已達法定請領年齡65歲，可以申請；實際請領方式（年金或一次金）需依您實際保險年資查詢確認' };
+  } else if(age>=60){
+    bliRow = { key:'retire_bli', ic:'💼', t1:'勞保老年給付', ok:true, badge:'已符合（可提前）',
+      t2:'已達最早可提前請領年齡60歲；實際請領方式與是否減給，需依您實際保險年資查詢確認' };
+  } else {
+    bliRow = { key:'retire_bli', ic:'💼', t1:'勞保老年給付', ok:false, badge:'尚未符合',
+      t2:`還差 ${60-age} 年到最快可提前請領的60歲` };
+  }
+
+  let pensionRow;
+  if(age>=60){
+    pensionRow = { key:'retire_pension', ic:'📂', t1:'勞退新制個人專戶', ok:true, badge:'已符合',
+      t2:'已滿60歲，不論在職與否皆可請領' };
+  } else {
+    pensionRow = { key:'retire_pension', ic:'📂', t1:'勞退新制個人專戶', ok:false, badge:'尚未符合',
+      t2:`還差 ${60-age} 年到60歲` };
+  }
+
+  checkResult = { age, years, hasOld, rows:[oldRow, bliRow, pensionRow] };
+  go('retire_result');
+}
+
 
 function render(key){
   const area = document.getElementById('screenArea');
@@ -290,6 +417,21 @@ function render(key){
     titleText.textContent = '👴 退休相關';
     subText.textContent = '快速找到您需要的資訊';
     html = `<div class="intro-card">
+      <h3>您想先做什麼？</h3>
+      <p>不確定自己符合哪些資格，可以先自我檢測；已經清楚要辦什麼，也可以直接跳過去看。</p>
+    </div>` + entryPaths.map(s=>`
+      <div class="list-row" onclick="go('${s.key}')">
+        <div class="ic">${s.ic}</div>
+        <div class="txt"><div class="t1">${s.t1}</div><div class="t2">${s.t2}</div></div>
+        <div class="chev">›</div>
+      </div>`).join('');
+  }
+
+  else if(key === 'retire_list'){
+    titleText.textContent = '📝 退休相關三大類別';
+    subText.textContent = '快速找到您需要的資訊';
+    crumbTrail = ['退休相關'];
+    html = `<div class="intro-card">
       <h3>請選擇您目前的情況</h3>
       <p>依照您現在遇到的情境，點選最貼近的選項。</p>
     </div>` + retireScenarios.map(s=>`
@@ -298,6 +440,51 @@ function render(key){
         <div class="txt"><div class="t1">${s.t1}</div><div class="t2">${s.t2}</div></div>
         <div class="chev">›</div>
       </div>`).join('');
+  }
+
+  else if(key === 'retire_check'){
+    titleText.textContent = '🔍 資格自我檢測';
+    subText.textContent = '輸入基本資料，快速看懂自己符合什麼';
+    crumbTrail = ['退休相關'];
+    html = `<div class="intro-card">
+      <h3>填寫兩組日期就好</h3>
+      <p>僅供初步參考，正式資格與年資仍以人事室核定、勞保局資料為準。</p>
+    </div>
+    <div class="info-card">
+      <h4>📋 出生年月日</h4>
+      <div class="date-row">
+        <div class="date-field"><label>年（西元）</label><input type="number" id="birthY" placeholder="1968"></div>
+        <div class="date-field"><label>月</label><input type="number" id="birthM" placeholder="5" min="1" max="12"></div>
+        <div class="date-field"><label>日</label><input type="number" id="birthD" placeholder="20" min="1" max="31"></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h4>📋 到職年月日</h4>
+      <div class="date-row">
+        <div class="date-field"><label>年（西元）</label><input type="number" id="joinY" placeholder="2005"></div>
+        <div class="date-field"><label>月</label><input type="number" id="joinM" placeholder="3" min="1" max="12"></div>
+        <div class="date-field"><label>日</label><input type="number" id="joinD" placeholder="1" min="1" max="31"></div>
+      </div>
+      <button class="check-btn" onclick="runCheck()">查看我符合哪些項目</button>
+    </div>`;
+  }
+
+  else if(key === 'retire_result'){
+    titleText.textContent = '✅ 檢測結果';
+    subText.textContent = '點進項目查看詳細內容與辦理方式';
+    crumbTrail = ['退休相關','資格自我檢測'];
+    html = `<div class="intro-card">
+      <h3>依您輸入的資料</h3>
+      <p>年齡 ${checkResult.age} 歲・到職年資約 ${checkResult.years} 年${checkResult.hasOld ? '（含舊制年資）' : '（無舊制年資，2005年7月後到職）'}</p>
+    </div>` + checkResult.rows.map(r=>`
+      <div class="list-row" onclick="go('${r.key}')">
+        <div class="ic">${r.ic}</div>
+        <div class="txt">
+          <div class="t1">${r.t1} <span class="status ${r.ok===true?'ok':(r.ok===false?'no':'na')}">${r.badge}</span></div>
+          <div class="t2">${r.t2}</div>
+        </div>
+        <div class="chev">›</div>
+      </div>`).join('') + `<div class="footnote">結果為初步估算，實際核定請以人事室與勞保局為準</div>`;
   }
 
   else if(retireDetail[key]){
@@ -315,6 +502,15 @@ function render(key){
 
     if(links && links.online){
       html += `
+      <div class="prep-box">
+        <div class="pb-title">📋 上網申辦前，請先準備</div>
+        <ul>
+          <li>健保卡正本（本人的，卡片上未顯示「已註銷」）</li>
+          <li>本人申辦的手機門號（4G/5G 月租，非預付卡、非公司門號）— 供「手機認證」登入</li>
+          <li>或已申請「自然人憑證」＋讀卡機</li>
+          <li>身分證統一編號</li>
+        </ul>
+      </div>
       <div class="apply-block">
         <div class="apply-label">🟢 線上申請</div>
         <a class="apply-link online" href="${links.online.url}" target="_blank" rel="noopener">
@@ -336,6 +532,10 @@ function render(key){
         <p>${links.note}</p>
       </div>`;
     }
+  }
+
+  if(history.length > 1){
+    html += `<button class="back-full" onclick="goBack()">‹ 返回上一頁</button>`;
   }
 
   crumbs.innerHTML = crumbTrail.map(c=>`<span class="crumb">${c}</span>`).join('');
