@@ -71,11 +71,6 @@
   .backbtn.hidden{ visibility:hidden; }
   .topbar h2{ font-family:'Noto Serif TC', serif; font-size:17px; margin:0; font-weight:600; }
   .topbar .sub{ font-size:11.5px; color:#CFE3DC; margin-top:2px; letter-spacing:.03em; }
-  .crumbs{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
-  .crumb{
-    font-size:10.5px; background:rgba(255,255,255,0.14);
-    padding:3px 9px; border-radius:100px; color:#DDEEE7; letter-spacing:.02em;
-  }
 
   .screen-area{ flex:1; overflow-y:auto; background:#F7FAF8; padding:18px 16px 28px; }
   .screen-area::-webkit-scrollbar{ width:5px; }
@@ -258,7 +253,6 @@
             <div class="sub" id="subText">快速找到您需要的資訊</div>
           </div>
         </div>
-        <div class="crumbs" id="crumbs"></div>
       </div>
       <div class="screen-area" id="screenArea"></div>
     </div>
@@ -447,11 +441,9 @@ function render(key){
   const backBtn = document.getElementById('backBtn');
   const titleText = document.getElementById('titleText');
   const subText = document.getElementById('subText');
-  const crumbs = document.getElementById('crumbs');
 
   backBtn.classList.toggle('hidden', history.length <= 1);
 
-  let crumbTrail = [];
   let html = '';
 
   if(key === 'retire_home'){
@@ -459,7 +451,7 @@ function render(key){
     subText.textContent = '';
     html = `<div class="intro-card warm">
       <h3>謝謝您這些年為醫院付出的時間與心力</h3>
-      <p>退休不是結束，而是人生另一個階段的開始<br>祝福您接下來的生活，有更多時間留給自己<br>我們將陪您完成退休相關手續。</p>
+      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休手續。</p>
     </div>` + entryPaths.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -471,7 +463,6 @@ function render(key){
   else if(key === 'retire_list'){
     titleText.textContent = '📝 退休相關三大類別';
     subText.textContent = '快速找到您需要的資訊';
-    crumbTrail = ['退休相關'];
     html = `<div class="intro-card">
       <h3>請選擇您目前的情況</h3>
       <p>依照您現在遇到的情境，點選最貼近的選項。</p>
@@ -486,10 +477,9 @@ function render(key){
   else if(key === 'retire_check'){
     titleText.textContent = '🔍 資格自我檢測';
     subText.textContent = '輸入基本資料，快速看懂自己符合什麼';
-    crumbTrail = ['退休相關'];
     html = `<div class="intro-card">
       <h3>填寫兩組日期就好</h3>
-      <p>僅供初步參考，正式資格與年資仍以勞保局資料為準。</p>
+      <p>僅供初步參考，正式資格與年資仍以人事室核定、勞保局資料為準。</p>
     </div>
     <div class="info-card">
       <h4>📋 出生年月日</h4>
@@ -513,7 +503,6 @@ function render(key){
   else if(key === 'retire_result'){
     titleText.textContent = '✅ 檢測結果';
     subText.textContent = '點進項目查看詳細內容與辦理方式';
-    crumbTrail = ['退休相關','資格自我檢測'];
     html = `<div class="intro-card">
       <h3>依您輸入的資料</h3>
       <p>年齡 ${checkResult.age} 歲・到職年資約 ${checkResult.years} 年${checkResult.hasOld ? '（含舊制年資）' : '（無舊制年資，2005年7月後到職）'}</p>
@@ -525,15 +514,14 @@ function render(key){
           <div class="t2">${r.t2}</div>
         </div>
         <div class="chev">›</div>
-      </div>`).join('') + `<div class="footnote">結果為初步估算，實際核定請以勞保局為準</div>`;
+      </div>`).join('') + `<div class="footnote">結果為初步估算，實際核定請以人事室與勞保局為準</div>`;
   }
 
   else if(retireDetail[key]){
     const d = retireDetail[key];
     const links = applyLinks[key];
     titleText.textContent = d.title;
-    subText.textContent = '知識說明';
-    crumbTrail = ['退休相關'];
+    subText.textContent = '';
     html = journeyHTML(d.step) +
       d.cards.map(c=>`
         <div class="info-card">
@@ -570,15 +558,14 @@ function render(key){
     const links = applyLinks[baseKey];
     titleText.textContent = d.title;
     subText.textContent = mode === 'online' ? '🟢 線上申辦' : '🏢 現場申辦';
-    crumbTrail = ['退休相關'];
 
     if(mode === 'online'){
       html = `
       <div class="prep-box">
         <div class="pb-title">🟢 線上辦，請先準備</div>
         <ul>
-          <li>本人健保卡正本（卡片上未顯示「已註銷」）</li>
-          <li>本人名下手機門號（非預付卡，供「手機認證」登入</li>
+          <li>健保卡正本（本人的，卡片上未顯示「已註銷」）</li>
+          <li>本人申辦的手機門號（4G/5G 月租，非預付卡、非公司門號）— 供「手機認證」登入</li>
           <li>或已申請「自然人憑證」＋讀卡機</li>
           <li>身分證統一編號</li>
         </ul>
@@ -618,8 +605,6 @@ function render(key){
   if(history.length > 1){
     html += `<button class="back-full" onclick="goBack()">‹ 返回上一頁</button>`;
   }
-
-  crumbs.innerHTML = crumbTrail.map(c=>`<span class="crumb">${c}</span>`).join('');
   area.innerHTML = html;
   area.scrollTop = 0;
 }
