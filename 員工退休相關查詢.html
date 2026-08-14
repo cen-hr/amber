@@ -319,9 +319,9 @@ const retireDetail = {
     step:1,
     title:'🎂 我符合退休資格了（舊制退休金）',
     cards:[
-      {h:'這張卡片適用誰？<span class="tag">舊制年資</span>', items:[
+      {h:'我適用嗎?><span class="tag">舊制年資</span>', items:[
         '適用對象：<strong>2005 年勞退新制上路前</strong>的工作年資（或選擇繼續適用舊制者）',
-        '2005 年後的年資，改看「📂 勞退新制個人專戶」那張卡片，兩者互不影響'
+        '2005 年後的年資，改看「📂 勞退新制個人專戶」'
       ]},
       {h:'退休資格（勞基法）', items:[
         '自請退休：工作 <strong>15 年</strong>以上年滿 <strong>55 歲</strong>；或工作 <strong>25 年</strong>以上不限年齡；或工作 <strong>10 年</strong>以上年滿 <strong>60 歲</strong>（符合其一即可）',
@@ -361,7 +361,7 @@ const retireDetail = {
         '延後領（66–70歲）：每延後1年增4%，最多延後5年、增20%；延後期間完全沒有年金可領',
         '概略損益平衡點：<strong>60歲 vs 65歲</strong>約在 <strong>85歲</strong>打平——活到85歲以前，提前領總額較高；活過85歲，65歲領較划算',
         '<strong>65歲 vs 70歲</strong>約在 <strong>95歲</strong>打平——除非有把握活到95歲以上，數學上不一定划算',
-        '沒有標準答案：健康狀況、家族壽命、退休後是否有其他收入或立即資金需求，都要一併考慮，這只是概估參考'
+        '沒有標準答案：健康狀況、家族壽命、退休後是否有其他收入或立即資金需求，都要一併考慮，以上僅提供參考'
       ]},
     ]
   },
@@ -491,7 +491,7 @@ function render(key){
     subText.textContent = '';
     html = `<div class="intro-card warm">
       <h3>謝謝您這些年為醫院付出的時間與心力</h3>
-      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休手續。</p>
+      <p> 退休不是結束   而是人生另一個階段的開始 <br> 祝福您接下來的生活   有更多時間留給自己 <br> 我們將陪您完成退休手續 </p>
     </div>` + entryPaths.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -572,7 +572,7 @@ function render(key){
     if(key === 'retire_bli'){
       html += `
       <div class="info-card calc-card">
-        <h4>🧮 我想試算看看</h4>
+        <h4>🧮 我想試算看看(僅供參考!!)</h4>
         <div class="form-row">
           <label>如果我打算幾歲開始領？</label>
           <select id="claimAgeSelect" onchange="calcBreakeven()">
