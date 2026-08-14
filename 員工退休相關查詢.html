@@ -87,6 +87,29 @@
   }
   .intro-card h3{ font-family:'Noto Serif TC', serif; margin:0 0 6px; font-size:15.5px; color:var(--teal-deep); }
   .intro-card p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.6; }
+  .intro-card.warm{
+    background:linear-gradient(135deg, #FFF9F0 0%, #FBF0DE 100%);
+    border-color:var(--amber-soft);
+  }
+  .intro-card.warm h3{ color:#8A5A19; font-size:17px; }
+  .intro-card.warm p{ color:#6b5432; line-height:1.75; }
+
+  .choice-box{ margin-top:18px; }
+  .choice-title{ font-size:13px; font-weight:700; color:var(--ink); margin-bottom:10px; text-align:center; }
+  .choice-btn{
+    width:100%; display:flex; align-items:center; gap:12px;
+    border-radius:14px; padding:14px 16px; margin-bottom:10px;
+    border:1.5px solid var(--line); background:var(--paper); cursor:pointer;
+    font-family:'Noto Sans TC', sans-serif; transition:transform .15s ease, border-color .15s ease;
+  }
+  .choice-btn:hover{ transform:translateY(-2px); border-color:var(--sage); }
+  .choice-btn .cb-ic{ font-size:20px; flex:0 0 auto; }
+  .choice-btn .cb-text{ flex:1; text-align:left; display:flex; flex-direction:column; gap:2px; }
+  .choice-btn .cb-main{ font-size:13.5px; font-weight:700; color:var(--ink); }
+  .choice-btn .cb-sub{ font-size:11px; color:var(--ink-soft); }
+  .choice-btn .cb-arrow{ font-size:15px; color:var(--sage); }
+  .choice-btn.online{ border-color:var(--teal); }
+  .choice-btn.onsite{ border-color:var(--amber); }
 
   .list-row{
     background:var(--paper); border:1px solid var(--line); border-radius:14px;
@@ -133,6 +156,16 @@
     display:flex; align-items:center; gap:6px;
   }
   .prep-box ul{ margin:0; padding-left:18px; font-size:12px; color:#6b4f22; line-height:1.75; }
+  .prep-box.onsite{ background:#EFF3F1; border-color:var(--sage); }
+  .prep-box.onsite .pb-title{ color:var(--teal-deep); }
+  .prep-box.onsite ul{ color:var(--ink-soft); }
+  .onsite-card{
+    background:var(--paper); border:1.5px solid var(--teal); border-radius:14px;
+    padding:14px 16px; margin-top:10px;
+  }
+  .onsite-card .oc-label{ font-size:11px; font-weight:700; color:var(--teal); margin-bottom:6px; letter-spacing:.03em; }
+  .onsite-card .oc-name{ font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .onsite-card .oc-row{ font-size:12px; color:var(--ink-soft); margin-bottom:3px; line-height:1.6; }
   .apply-label{ font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.03em; }
   .apply-link{
     display:flex; align-items:center; gap:10px; border-radius:14px; padding:13px 14px;
@@ -254,13 +287,27 @@ const applyLinks = {
     online:{ label:'勞保局 e 化服務系統', url:'https://edesk.bli.gov.tw/me/#/home', note:'登入後選擇「老年給付」申辦' },
     forms:[
       {name:'老年給付申請書', url:'https://www.bli.gov.tw/0103242.html'},
-    ]
+    ],
+    onsite:{
+      name:'勞保局臺中市辦事處',
+      addr:'臺中市西區民權路131號',
+      phone:'04-22216711',
+      hours:'週一至週五 08:30–17:30（中午不休息）',
+      items:['身分證正本', '存摺正本（退休金匯款帳戶）', '申請書可現場索取，或先下載填好帶去', '委託他人代辦需附委託書']
+    }
   },
   retire_pension:{
     online:{ label:'勞保局 e 化服務系統', url:'https://edesk.bli.gov.tw/me/#/home', note:'登入後選擇「勞工退休金個人專戶」查詢／試算／申請' },
     forms:[
       {name:'勞工退休金書表下載總覽', url:'https://www.bli.gov.tw/0005596.html'},
-    ]
+    ],
+    onsite:{
+      name:'勞保局臺中市辦事處',
+      addr:'臺中市西區民權路131號',
+      phone:'04-22216711',
+      hours:'週一至週五 08:30–17:30（中午不休息）',
+      items:['身分證正本', '存摺正本（退休金匯款帳戶）', '申請書可現場索取，或先下載填好帶去', '委託他人代辦需附委託書']
+    }
   },
 };
 
@@ -306,11 +353,6 @@ const retireDetail = {
         '換過工作、在其他單位也有加保：年資會<strong>累計併計</strong>，不會因為換公司歸零',
         '建議申請前先上勞保局查詢個人實際加保紀錄，避免以為滿15年結果只能領一次金'
       ]},
-      {h:'應備文件', items:[
-        '身分證明文件（核對用）',
-        '存摺封面影本',
-        '委託他人代辦者需檢附委託書'
-      ]},
     ]
   },
   retire_pension:{
@@ -324,8 +366,7 @@ const retireDetail = {
         '未滿 60 歲但已領取勞保失能年金或身心障礙年金者，可提前請領'
       ]},
       {h:'個人專戶查詢', items:[
-        '專戶金額所有權屬於勞工本人，<strong>雇主不得查詢</strong>員工個人專戶金額',
-        '可透過勞保局 e 化服務系統、勞動保障卡至郵局 ATM，或臨櫃查詢與試算'
+        '專戶金額所有權屬於勞工本人，<strong>雇主不得查詢</strong>員工個人專戶金額'
       ]},
     ]
   },
@@ -415,10 +456,10 @@ function render(key){
 
   if(key === 'retire_home'){
     titleText.textContent = '👴 退休相關';
-    subText.textContent = '快速找到您需要的資訊';
-    html = `<div class="intro-card">
-      <h3>您想先做什麼？</h3>
-      <p>不確定自己符合哪些資格，可以先自我檢測；已經清楚要辦什麼，也可以直接跳過去看。</p>
+    subText.textContent = '';
+    html = `<div class="intro-card warm">
+      <h3>謝謝您這些年為醫院付出的時間與心力</h3>
+      <p>退休不是結束，而是人生另一個階段的開始。祝福您接下來的生活，有更多時間留給自己，我們將陪您完成退休手續。</p>
     </div>` + entryPaths.map(s=>`
       <div class="list-row" onclick="go('${s.key}')">
         <div class="ic">${s.ic}</div>
@@ -500,10 +541,41 @@ function render(key){
           <ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>
         </div>`).join('');
 
-    if(links && links.online){
+    if(links && links.online && links.onsite){
       html += `
+      <div class="choice-box">
+        <div class="choice-title">您想怎麼辦理？</div>
+        <button class="choice-btn online" onclick="go('${key}|online')">
+          <span class="cb-ic">🟢</span>
+          <span class="cb-text"><span class="cb-main">線上申辦</span><span class="cb-sub">在家用手機或電腦完成</span></span>
+          <span class="cb-arrow">›</span>
+        </button>
+        <button class="choice-btn onsite" onclick="go('${key}|onsite')">
+          <span class="cb-ic">🏢</span>
+          <span class="cb-text"><span class="cb-main">現場辦理</span><span class="cb-sub">親自跑一趟勞保局</span></span>
+          <span class="cb-arrow">›</span>
+        </button>
+      </div>`;
+    } else if(links && links.note){
+      html += `<div class="closed-box">
+        <div class="ic">ℹ️</div>
+        <p>${links.note}</p>
+      </div>`;
+    }
+  }
+
+  else if(key.includes('|')){
+    const [baseKey, mode] = key.split('|');
+    const d = retireDetail[baseKey];
+    const links = applyLinks[baseKey];
+    titleText.textContent = d.title;
+    subText.textContent = mode === 'online' ? '🟢 線上申辦' : '🏢 現場申辦';
+    crumbTrail = ['退休相關'];
+
+    if(mode === 'online'){
+      html = `
       <div class="prep-box">
-        <div class="pb-title">📋 上網申辦前，請先準備</div>
+        <div class="pb-title">🟢 線上辦，請先準備</div>
         <ul>
           <li>健保卡正本（本人的，卡片上未顯示「已註銷」）</li>
           <li>本人申辦的手機門號（4G/5G 月租，非預付卡、非公司門號）— 供「手機認證」登入</li>
@@ -526,10 +598,19 @@ function render(key){
             <span class="al-arrow">↓</span>
           </a>`).join('')}
       </div>`;
-    } else if(links && links.note){
-      html += `<div class="closed-box">
-        <div class="ic">ℹ️</div>
-        <p>${links.note}</p>
+    } else {
+      const o = links.onsite;
+      html = `
+      <div class="prep-box onsite">
+        <div class="pb-title">🏢 現場辦，請先準備</div>
+        <ul>${o.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+      <div class="onsite-card">
+        <div class="oc-label">📍 要到哪裡去</div>
+        <div class="oc-name">${o.name}</div>
+        <div class="oc-row">🏠 ${o.addr}</div>
+        <div class="oc-row">📞 ${o.phone}</div>
+        <div class="oc-row">🕗 ${o.hours}</div>
       </div>`;
     }
   }
