@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>賢德醫院 員工規章</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f5f0e8;--card:#fdfaf4;--sage:#8fa68e;--terra:#b07d62;
+  --sand:#d4bc9a;--text:#3d342a;--muted:#8c7b6b;--line:#e0d5c5;
+}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);}
+
+/* Header */
+header{background:#e0d5c5;padding:48px 20px 40px;text-align:center;}
+header h1{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:600;color:#3d342a;letter-spacing:4px;line-height:1.6;}
+header p{margin-top:8px;font-size:12px;color:#6b5c4e;letter-spacing:2px;}
+
+/* Wrap */
+.wrap{max-width:680px;margin:0 auto;padding:16px 14px 40px;}
+
+/* Card */
+.card{background:var(--card);border-radius:8px;border:1px solid var(--line);margin-bottom:12px;overflow:hidden;}
+.card-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:#f7f3ec;}
+.badge{width:22px;height:22px;background:var(--sage);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;flex-shrink:0;}
+.card-head h2{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;color:var(--text);letter-spacing:1px;}
+.card-body{padding:12px 14px;}
+
+/* 雙欄條列 */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+ul{padding-left:0;list-style:none;}
+ul li{font-size:13px;line-height:1.9;padding:2px 0 2px 6px;position:relative;color:var(--text);}
+
+/* 小標題 */
+.sub{font-size:11.5px;font-weight:500;color:var(--muted);letter-spacing:.8px;margin:10px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+
+/* 表格 */
+.tbl-wrap{overflow-x:auto;margin-top:8px;}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+col.c1{width:20%;}col.c2{width:52%;}col.c3{width:28%;}
+thead tr{background:var(--sage);}
+thead th{padding:7px 6px;color:#fff;font-weight:400;letter-spacing:.3px;text-align:left;}
+tbody tr{border-bottom:1px solid var(--line);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:6px 6px;vertical-align:top;line-height:1.6;color:var(--text);word-break:break-all;}
+tbody td:first-child{font-weight:500;color:var(--terra);word-break:keep-all;}
+
+/* 懲處 */
+.pen-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.pen-item{display:flex;align-items:baseline;gap:5px;font-size:12.5px;line-height:1.7;flex:1;min-width:140px;}
+.ptag{background:var(--sand);color:var(--terra);font-size:11px;padding:2px 7px;border-radius:3px;flex-shrink:0;font-weight:500;white-space:nowrap;}
+
+/* 警示 */
+.notice{background:#f8ede8;border-left:3px solid var(--terra);border-radius:0 5px 5px 0;padding:9px 14px;font-size:13px;line-height:1.8;margin-top:8px;color:var(--text);}
+.notice strong{color:#a03020;}
+
+/* ── 簽名區 ── */
+.sign-card{background:var(--card);border-radius:8px;border:1px solid var(--line);overflow:hidden;margin-bottom:12px;}
+.sign-head{background:var(--sage);padding:11px 16px;font-family:'Noto Serif TC',serif;font-size:14px;color:#fff;letter-spacing:2px;text-align:center;}
+.sign-body{padding:14px;}
+
+.confirm-box{background:#f5f0e6;border-radius:6px;padding:11px 14px;font-size:13px;line-height:1.9;margin-bottom:14px;color:var(--text);}
+
+/* 簽名區下方：左右佈局 */
+.sign-bottom{display:grid;grid-template-columns:1fr 3fr;gap:14px;align-items:stretch;}
+
+/* 左側：員工資料 */
+.sign-left{display:flex;flex-direction:column;gap:10px;justify-content:space-between;padding:4px 0;}
+.info-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;letter-spacing:.4px;}
+.info-field input{width:100%;padding:7px 10px;border:1.5px solid var(--line);border-radius:5px;background:#fff;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:13px;outline:none;transition:border-color .15s;}
+.info-field input:focus{border-color:var(--sage);}
+.date-field{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* 右側：簽名欄 */
+.sign-right{display:flex;flex-direction:column;gap:6px;}
+.sign-label{font-size:11px;color:var(--muted);letter-spacing:.4px;}
+.sign-box{position:relative;flex:1;min-height:150px;}
+canvas{position:absolute;inset:0;width:100%;height:100%;border:1.5px solid var(--line);border-radius:6px;background:#fff;cursor:crosshair;touch-action:none;display:block;}
+canvas.signed{border-color:var(--sage);}
+#signImg{position:absolute;inset:0;width:100%;height:100%;border-radius:6px;border:1.5px solid var(--sage);object-fit:contain;object-position:left center;background:#fff;display:none;}
+.sign-hint{font-size:10.5px;color:var(--muted);text-align:center;}
+.btns{display:flex;gap:8px;}
+.btn{flex:1;padding:10px 0;border:none;border-radius:6px;font-family:'Noto Sans TC',sans-serif;font-size:13px;cursor:pointer;letter-spacing:1px;transition:opacity .15s;}
+.btn:active{opacity:.7;}
+.btn-clear{background:var(--line);color:var(--muted);}
+.btn-save{background:var(--terra);color:#fff;}
+.btn-save.done{background:var(--sage);}
+
+.done-msg{display:none;margin-top:12px;background:#eaf2eb;border-radius:6px;padding:10px 14px;font-size:13px;color:#3a7a4a;text-align:center;line-height:1.7;}
+.done-msg.show{display:block;}
+#resultImg{display:none;width:100%;border-radius:8px;margin-top:10px;border:1.5px solid #8fa68e;}
+
+/* ── 截圖模式（強制794px固定寬度版面） ── */
+body.capturing {
+  background: #ffffff !important;
+  min-width: 794px !important;
+}
+#captureArea .wrap {
+  max-width: 794px !important;
+  width: 794px !important;
+  padding: 12px 20px 24px !important;
+  margin: 0 !important;
+}
+#captureArea header {
+  background: #ffffff !important;
+  border-bottom: 2px solid #888 !important;
+  padding: 10px 20px !important;
+}
+
+
+#captureArea .card { margin-bottom: 8px !important; }
+#captureArea .card-head { background: #eeeeee !important; }
+#captureArea .sign-card { margin-top: 8px !important; }
+#captureArea .done-msg { display: none !important; }
+
+/* ── 列印樣式 ── */
+@media print {
+  @page { size: A4 portrait; margin: 8mm 10mm 8mm 10mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  body { background: #fff !important; color: #000 !important; zoom: 72%; }
+
+  header { background: #e0d5c5 !important; padding: 36px 20px 28px !important; text-align: center !important; }
+  header h1 { color: #3d342a !important; font-size: 14pt !important; letter-spacing: 4px !important; line-height: 1.6 !important; }
+  header p  { color: #6b5c4e !important; font-size: 8pt !important; margin-top: 6px !important; }
+
+  .wrap { padding: 4px 0 0; max-width: 100% !important; }
+
+  .card { border: 0.8px solid #ccc !important; border-radius: 2px !important; margin-bottom: 4px !important; background: #fff !important; }
+  .card:not(.card-leave) { page-break-inside: avoid; break-inside: avoid; }
+  .card-leave { page-break-inside: auto; break-inside: auto; }
+  .card-head { background: #eee !important; padding: 3px 8px !important; }
+  .badge { background: #777 !important; color: #fff !important; font-size: 8pt !important; width: 16px !important; height: 16px !important; }
+  .card-head h2 { font-size: 9pt !important; color: #111 !important; }
+  .card-body { padding: 3px 8px !important; }
+
+  .cols { grid-template-columns: 1fr 1fr; gap: 0 10px !important; }
+  ul li { font-size: 7.5pt !important; line-height: 1.5 !important; padding: 1px 0 1px 3px !important; }
+  .sub { font-size: 7pt !important; margin: 3px 0 2px !important; padding-bottom: 1px; border-bottom-color: #ccc !important; }
+
+  table { font-size: 7pt !important; }
+  thead th { padding: 2.5px 4px !important; }
+  tbody td { padding: 2px 4px !important; line-height: 1.35 !important; }
+
+  .pen-row { gap: 4px !important; }
+  .pen-item { font-size: 7.5pt !important; }
+  .ptag { font-size: 7pt !important; padding: 1px 5px !important; }
+  .notice { font-size: 7.5pt !important; padding: 4px 8px !important; line-height: 1.5; margin-top: 4px; }
+
+  /* 簽名區 */
+  .sign-card { page-break-inside: avoid; break-inside: avoid; margin-top: 4px !important; border: 0.8px solid #ccc !important; }
+  .sign-head { background: #888 !important; color: #fff !important; font-size: 9pt !important; padding: 4px 8px !important; }
+  .sign-body { padding: 5px 8px !important; }
+  .confirm-box { font-size: 7.5pt !important; padding: 4px 8px !important; line-height: 1.6 !important; margin-bottom: 6px !important; background: #f5f0e6 !important; }
+
+  .sign-bottom { grid-template-columns: 1fr 3fr !important; gap: 10px !important; }
+  .sign-left { gap: 6px !important; padding: 2px 0 !important; }
+  .info-field label { font-size: 7pt !important; }
+  .info-field input { border: none !important; border-bottom: 0.8px solid #aaa !important; border-radius: 0 !important; padding: 1px 2px !important; font-size: 8pt !important; background: transparent !important; }
+  .date-field { font-size: 7pt !important; }
+
+  .sign-right { gap: 3px !important; }
+  .sign-label { font-size: 7pt !important; }
+  .sign-box { min-height: 55px !important; height: 55px !important; }
+
+  canvas { display: none !important; }
+  #signImg { display: block !important; position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; border: 0.8px solid #aaa !important; }
+
+  .sign-hint, .btns, .done-msg { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="captureArea"><header>
+  <h1>賢德醫院 員工規章暨請假辦法</h1>
+  <p>整合版修訂日期：115年01月01日</p>
+</header>
+
+<div class="wrap" id="mainContent">
+
+  <!-- 一 -->
+  <div class="card">
+    <div class="card-head"><div class="badge">一</div><h2>休假與特別休假</h2></div>
+    <div class="card-body">
+      <div class="sub">例假日規定</div>
+      <div class="cols">
+        <ul>
+          <li>例假日及國定假日優先休假，不得積假。</li>
+          <li>業務需要時由主管調配，次月補休完畢。</li>
+        </ul>
+        <ul>
+          <li>連休 5 日（含）以上須主任級以上核准。</li>
+          <li>主管每月底前排定次月班表送人事備核。</li>
+        </ul>
+      </div>
+      <div class="sub">特別休假（依到職日計算）</div>
+      <div class="cols">
+        <ul>
+          <li>滿 6 個月未滿 1 年：3 天</li>
+          <li>滿 1 年：7 天　／　滿 2 年：10 天</li>
+        </ul>
+        <ul>
+          <li>滿 3、4 年：14 天　／　滿 5 年以上：15 天</li>
+          <li>滿 10 年起每年加 1 天，上限 30 天</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二 -->
+  <div class="card card-leave">
+    <div class="card-head"><div class="badge">二</div><h2>各類假別一覽</h2></div>
+    <div class="card-body">
+      <div class="tbl-wrap">
+        <table>
+          <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+          <thead><tr><th>假別</th><th>天數／規定</th><th>薪資</th></tr></thead>
+          <tbody>
+            <tr><td>事假</td><td>每年不超過 14 日；需覓妥職務代理人</td><td>扣薪、扣全勤</td></tr>
+            <tr><td>家庭照顧假</td><td>每年 7 天，併入事假計算</td><td>無薪，不扣全勤</td></tr>
+            <tr><td>病假</td><td>每年不超過 30 日</td><td>半薪，不扣全勤獎金</td></tr>
+            <tr><td>公傷假</td><td>依勞動部核定（職業災害）</td><td>全薪</td></tr>
+            <tr><td>婚假</td><td>8 日（結婚日前 10 日起 3 個月內休完）</td><td>全薪</td></tr>
+            <tr><td>生理假</td><td>每月 1 日，全年以 3 日為限（女性）</td><td>半薪</td></tr>
+            <tr><td>產假（分娩）</td><td>8 週含假日</td><td>滿 6 月全薪；未滿半薪</td></tr>
+            <tr><td>產假（流產≥3月）</td><td>4 週含假日</td><td>同上</td></tr>
+            <tr><td>陪產假</td><td>5 日（配偶分娩）</td><td>全薪</td></tr>
+            <tr><td>流產假（2∼3月）</td><td>1 週含假日</td><td>無薪；可轉病假半薪</td></tr>
+            <tr><td>流產假（≤2月）</td><td>5 日</td><td>無薪；可轉病假半薪</td></tr>
+            <tr><td>產檢假</td><td>7 日（每次 4 小時）</td><td>全薪</td></tr>
+            <tr><td>育嬰留停</td><td>6 個月至 2 年；撫育未滿 3 歲子女</td><td>無薪</td></tr>
+            <tr><td>喪假</td><td>父母、配偶：8 日｜祖父母、子女等：6 日｜曾祖父母、兄弟姐妹：3 日（均需百日內休完）</td><td>全薪</td></tr>
+            <tr><td>公假</td><td>出差、訓練、兵役，視需要而定</td><td>全薪</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三 -->
+  <div class="card">
+    <div class="card-head"><div class="badge">三</div><h2>請假、打卡與代換班</h2></div>
+    <div class="card-body">
+      <div class="sub">請假注意</div>
+      <div class="cols">
+        <ul>
+          <li>發燒且有呼吸道症狀須停工，退燒後至少 24 小時（未服退燒藥）方可返崗。</li>
+          <li>留職停薪最長不超過 1 年，須院長核准。</li>
+        </ul>
+        <ul>
+          <li>各假別均須事先填寫請假單，附證明文件，經主管核准後始生效。</li>
+        </ul>
+      </div>
+      <div class="sub">打卡管理</div>
+      <div class="cols">
+        <ul>
+          <li>應準時刷卡；遲到、早退依時數扣薪並列入考核。</li>
+          <li>忘刷卡填「忘記刷卡單」，主管簽名後送人事。單月忘刷達 10 次，取消當月全勤獎金。</li>
+        </ul>
+        <ul>
+          <li>因公暫離崗位須向主管報告，擅離職守記大過。</li>
+          <li>公務出差須事前填「公外出申請單」，送主管簽核後轉人事；未辦理且情節嚴重者以曠工一日論。</li>
+        </ul>
+      </div>
+      <div class="sub">代班、換班</div>
+      <div class="cols">
+        <ul><li>次月班表須於當月底前排妥，備份送人事存查。</li></ul>
+        <ul><li>換班須事前一天申請主管簽准，不得事後補辦；未辦理以曠工論。</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四 -->
+  <div class="card">
+    <div class="card-head"><div class="badge">四</div><h2>值勤紀律與曠工</h2></div>
+    <div class="card-body">
+      <div class="pen-row">
+        <div class="pen-item"><span class="ptag">瞌睡</span>警告乙次，減發三節獎金 1,000 元</div>
+        <div class="pen-item"><span class="ptag">臥睡</span>小過乙次，減發三節獎金 3,000 元</div>
+        <div class="pen-item"><span class="ptag">擅離職守</span>大過乙次，減發三節獎金 5,000 元</div>
+      </div>
+      <div class="notice"><strong>曠工：</strong>無故連續曠工 3 日，或單月曠工達 6 日者，予以解職。</div>
+    </div>
+  </div>
+
+  <!-- 五 -->
+  <div class="card">
+    <div class="card-head"><div class="badge">五</div><h2>手機、制服與禁菸</h2></div>
+    <div class="card-body">
+      <div class="cols">
+        <div>
+          <div class="sub">手機管理</div>
+          <ul>
+            <li>上班滑手機（非工作）即時登記，減發三節獎金。</li>
+            <li>名單每週二院務會議公告；異議須 3 日內舉證。</li>
+          </ul>
+          <div class="sub">制服管理</div>
+          <ul>
+            <li>試用期滿 1 個月可申請 2 件；滿 1 年每年可申請 1 套。</li>
+            <li>任職未滿 1 年離職須扣制服費用。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="sub">禁菸規定</div>
+          <div class="notice" style="margin-top:0">
+            本院室內外（含大廳及大門口）<strong>全面禁菸</strong>。<br>違規稽查依情節<strong>罰款最高 10,000 元</strong>。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 簽名 -->
+  <div class="sign-card">
+    <div class="sign-head">員工閱讀確認暨簽名</div>
+    <div class="sign-body">
+      <div class="confirm-box">本人已詳閱以上各項規章，充分瞭解並同意確實遵守。</div>
+      <div class="sign-bottom">
+        <!-- 左：員工資料 -->
+        <div class="sign-left">
+          <div class="info-field"><label>員工編號</label><input type="text" id="empId" placeholder="請填寫"></div>
+          <div class="info-field"><label>單位</label><input type="text" id="dept" placeholder="請填寫"></div>
+          <div class="info-field"><label>姓名</label><input type="text" id="empName" placeholder="請填寫"></div>
+          <div class="date-field" id="dateRow"></div>
+        </div>
+        <!-- 右：簽名 -->
+        <div class="sign-right">
+          <div class="sign-label">簽名欄</div>
+          <div class="sign-box">
+            <canvas id="signCanvas"></canvas>
+            <img id="signImg" alt="簽名">
+          </div>
+          <div class="sign-hint">以手指在框內滑動即可簽名</div>
+          <div class="btns" id="signControls">
+            <button class="btn btn-clear" onclick="clearSign()">清除重寫</button>
+            <button class="btn btn-save" id="saveBtn" onclick="saveSign()">完成並產生圖片</button>
+          </div>
+        </div>
+      </div>
+      <div class="done-msg" id="doneMsg">
+        ✅ 完成！檔案已自動下載（檔名：員工編號）。如未自動下載，請長按下方圖片儲存後傳給人事室。
+      </div>
+      <img id="resultImg" style="display:none;width:100%;border-radius:8px;margin-top:10px;border:1.5px solid #8fa68e;" alt="完成截圖">
+    </div>
+  </div>
+
+</div>
+</div><!-- /captureArea -->
+
+<script>
+const t = new Date();
+document.getElementById('dateRow').textContent = `簽名日期：${t.getFullYear()-1911} 年 ${t.getMonth()+1} 月 ${t.getDate()} 日`;
+
+const canvas = document.getElementById('signCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSigned = false;
+
+function resize(){
+  const r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  canvas.width = r.width * dpr;
+  canvas.height = r.height * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+resize();
+window.addEventListener('resize', resize);
+
+function pos(e){
+  const r = canvas.getBoundingClientRect();
+  const s = e.touches ? e.touches[0] : e;
+  return { x: s.clientX - r.left, y: s.clientY - r.top };
+}
+
+canvas.addEventListener('mousedown', e => { drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+canvas.addEventListener('mousemove', e => { if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); mark(); });
+canvas.addEventListener('mouseup', () => { drawing=false; ctx.beginPath(); });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); mark(); }, {passive:false});
+canvas.addEventListener('touchend', e => { e.preventDefault(); drawing=false; ctx.beginPath(); }, {passive:false});
+
+function mark(){ hasSigned=true; canvas.classList.add('signed'); }
+
+function clearSign(){
+  const r = canvas.getBoundingClientRect();
+  ctx.clearRect(0, 0, r.width, r.height);
+  hasSigned = false;
+  canvas.classList.remove('signed');
+  canvas.style.display = 'block';
+  const img = document.getElementById('signImg');
+  img.style.display = 'none'; img.src = '';
+  const resultImg = document.getElementById('resultImg');
+  if(resultImg){ resultImg.style.display = 'none'; resultImg.src = ''; }
+  document.getElementById('doneMsg').classList.remove('show');
+  document.getElementById('saveBtn').classList.remove('done');
+  document.getElementById('saveBtn').textContent = '完成並產生圖片';
+  document.getElementById('saveBtn').disabled = false;
+  document.getElementById('signControls').style.display = 'flex';
+}
+
+async function saveSign(){
+  if(!hasSigned){ alert('請先完成簽名！'); return; }
+  const empName = document.getElementById('empName').value.trim();
+  if(!empName){ alert('請填寫姓名後再送出！'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '產生中...';
+  btn.disabled = true;
+
+  // 固定簽名圖
+  const signImg = document.getElementById('signImg');
+  signImg.src = canvas.toDataURL('image/png');
+  signImg.style.display = 'block';
+  canvas.style.display = 'none';
+  document.getElementById('signControls').style.display = 'none';
+  await new Promise(r => setTimeout(r, 300));
+
+  try {
+    const el = document.getElementById('captureArea');
+
+    // 暫時加上截圖用樣式：固定寬度、移除 scroll
+    el.style.width = '860px';
+    el.style.maxWidth = '860px';
+    document.body.style.minWidth = '860px';
+    document.body.classList.add('capturing');
+
+    await new Promise(r => setTimeout(r, 250));
+
+    const captured = await html2canvas(el, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#f5f0e8',
+      logging: false,
+      width: 860,
+      windowWidth: 860,
+      ignoreElements: el => el.id === 'resultImg'
+    });
+
+    // 還原
+    el.style.width = '';
+    el.style.maxWidth = '';
+    document.body.style.minWidth = '';
+    document.body.classList.remove('capturing');
+
+    // 合成 A4 比例 canvas（白底）
+    const A4W = captured.width;
+    const A4H = Math.round(A4W * 1.4142);
+    const a4 = document.createElement('canvas');
+    a4.width = A4W;
+    a4.height = Math.max(A4H, captured.height);
+    const a4ctx = a4.getContext('2d');
+    a4ctx.fillStyle = '#ffffff';
+    a4ctx.fillRect(0, 0, a4.width, a4.height);
+    a4ctx.drawImage(captured, 0, 0);
+
+    const jpegData = a4.toDataURL('image/jpeg', 0.95);
+
+    // 顯示預覽圖
+    const resultImg = document.getElementById('resultImg');
+    resultImg.src = jpegData;
+    resultImg.style.display = 'block';
+
+    // 自動下載，檔名為員工編號
+    const empId2 = document.getElementById('empId').value.trim();
+    const t2 = new Date();
+    const dateStr = `${t2.getFullYear()-1911}${String(t2.getMonth()+1).padStart(2,'0')}${String(t2.getDate()).padStart(2,'0')}`;
+    let namePart = '';
+    if(empId2 && empName) namePart = `${empId2}_${empName}`;
+    else if(empId2) namePart = empId2;
+    else if(empName) namePart = empName;
+    else namePart = '未填寫';
+    const filename = `${namePart}_${dateStr}.jpg`;
+
+    const a = document.createElement('a');
+    a.href = jpegData;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // 用隱藏表單上傳到 Google Drive（相容所有瀏覽器）
+    btn.textContent = '上傳中...';
+    const doneMsg = document.getElementById('doneMsg');
+    try {
+      document.getElementById('uploadImage').value = jpegData;
+      document.getElementById('uploadFilename').value = filename;
+      document.getElementById('uploadForm').submit();
+      doneMsg.innerHTML = '✅ 已送出！檔案將自動存入雲端硬碟。<br>請將下方圖片<strong>長按儲存</strong>後傳給人事室。';
+    } catch(uploadErr) {
+      doneMsg.innerHTML = '⚠️ 雲端上傳失敗，請長按下方圖片儲存後傳給人事室。';
+    }
+
+    doneMsg.classList.add('show');
+    btn.classList.add('done');
+    btn.textContent = '✓ 完成';
+    setTimeout(()=>{ resultImg.scrollIntoView({behavior:'smooth', block:'start'}); }, 300);
+
+  } catch(e) {
+    document.getElementById('doneMsg').innerHTML = '✅ 簽名完成！請長按下方圖片儲存後傳給人事室。';
+    document.getElementById('doneMsg').classList.add('show');
+    btn.classList.add('done');
+    btn.textContent = '✓ 完成';
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<form id="uploadForm" method="POST" action="https://script.google.com/macros/s/AKfycbzSOvMajWK_srhRl519yARBjwNuMmhPAJspfWp9s4GbTD2VEKppHe647ce4i3zznYyQ/exec" target="uploadFrame" style="display:none;">
+  <input type="hidden" id="uploadImage" name="image" value="">
+  <input type="hidden" id="uploadFilename" name="filename" value="">
+</form>
+<iframe id="uploadFrame" name="uploadFrame" style="display:none;"></iframe>
+</body>
+</html>
