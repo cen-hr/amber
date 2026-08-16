@@ -82,7 +82,7 @@
 
 <header>
   <p class="eyebrow">醫護人員報備支援申請</p>
-  <h1 id="pageTitle">急件申請後請務必另行通知人事室</h1>
+  <h1 id="pageTitle">請選擇報備類型</h1>
 </header>
 
 <main>
@@ -145,6 +145,10 @@
 
     <div class="card sectionType hidden" data-section="multiday">
       <h2><span class="dot"></span>報備日期（可複選）</h2>
+      <div class="field">
+        <label>年月<span class="req">*</span></label>
+        <input type="month" id="m_month">
+      </div>
       <div class="dategrid" id="dateGrid"></div>
       <div class="field" style="margin-top:16px;">
         <label>時間（全部日期統一套用）<span class="req">*</span></label>
@@ -202,11 +206,29 @@ document.querySelectorAll('.typeCard').forEach(btn => {
 });
 
 const dateGrid = document.getElementById('dateGrid');
-for (let d = 1; d <= 31; d++) {
-  const label = document.createElement('label');
-  label.innerHTML = `<input type="checkbox" value="${d}"><span>${d}</span>`;
-  dateGrid.appendChild(label);
+const monthInput = document.getElementById('m_month');
+
+function daysInSelectedMonth(){
+  if (!monthInput.value) return 31;
+  const [y, m] = monthInput.value.split('-').map(Number);
+  return new Date(y, m, 0).getDate();
 }
+
+function renderDateGrid(){
+  const checkedDays = new Set(
+    [...dateGrid.querySelectorAll('input:checked')].map(i => i.value)
+  );
+  dateGrid.innerHTML = '';
+  const total = daysInSelectedMonth();
+  for (let d = 1; d <= total; d++) {
+    const label = document.createElement('label');
+    const wasChecked = checkedDays.has(String(d)) ? 'checked' : '';
+    label.innerHTML = `<input type="checkbox" value="${d}" ${wasChecked}><span>${d}</span>`;
+    dateGrid.appendChild(label);
+  }
+}
+renderDateGrid();
+monthInput.addEventListener('change', renderDateGrid);
 
 const MAX_ENTRIES = 15;
 const entriesWrap = document.getElementById('entries');
@@ -298,10 +320,11 @@ document.getElementById('reportForm').addEventListener('submit', async (e) => {
     payload.rows = [{ date, time }];
   }
   else if (currentType === 'multiday') {
+    const monthVal = monthInput.value;
     const checked = [...dateGrid.querySelectorAll('input:checked')].map(i => i.value);
     const time = document.getElementById('m_time').value.trim();
-    if (checked.length === 0 || !time || timeInvalid(time)) { showMsg('請至少勾選一天，並確認時間格式正確。', false); return; }
-    payload.rows = checked.map(d => ({ date: d, time }));
+    if (!monthVal || checked.length === 0 || !time || timeInvalid(time)) { showMsg('請選擇年月、至少勾選一天，並確認時間格式正確。', false); return; }
+    payload.rows = checked.map(d => ({ date: `${monthVal}-${String(d).padStart(2,'0')}`, time }));
   }
   else if (currentType === 'multientry') {
     const rows = [];
@@ -346,7 +369,8 @@ document.getElementById('reportForm').addEventListener('submit', async (e) => {
       document.getElementById('pageTitle').textContent = '請選擇報備類型';
       currentType = null;
       entriesWrap.innerHTML = ''; entryCount = 0; addEntry();
-      dateGrid.querySelectorAll('input:checked').forEach(i => i.checked = false);
+      monthInput.value = '';
+      renderDateGrid();
       customOrgWrap.classList.add('hidden');
     } else {
       showMsg('送出失敗，請稍後再試一次。', false);
