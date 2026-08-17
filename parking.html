@@ -35,15 +35,15 @@
   .btn-main:active { opacity:0.8; }
 
   /* 簽名畫面 */
-  #sig-screen { display:none; position:fixed; inset:0; background:#fff; z-index:400; flex-direction:column; }
+  #sig-screen { display:none; position:fixed; inset:0; background:#fff; z-index:400; flex-direction:column; height:100vh; }
   #sig-screen.show { display:flex; }
   .sig-screen-header { background:#1a1a1a; color:#fff; padding:20px 16px; text-align:center; flex-shrink:0; }
   .sig-screen-header h2 { font-size:16px; font-weight:700; letter-spacing:2px; }
   .sig-screen-header p { font-size:12px; color:#aaa; margin-top:4px; }
-  .sig-screen-body { flex:1; display:flex; flex-direction:column; padding:16px; max-width:480px; margin:0 auto; width:100%; }
+  .sig-screen-body { flex:1; display:flex; flex-direction:column; padding:16px; max-width:480px; margin:0 auto; width:100%; overflow:hidden; }
   .sig-hint { font-size:13px; color:#888; margin-bottom:10px; text-align:center; }
   .sig-canvas-wrap { flex:1; border:1.5px solid #ddd; border-radius:6px; overflow:hidden; background:#fff; position:relative; min-height:200px; }
-  canvas#sigPad { position:absolute; inset:0; width:100%; height:100%; cursor:crosshair; touch-action:none; }
+  canvas#sigPad { display:block; width:100%; height:100%; cursor:crosshair; touch-action:none; }
   .sig-actions { display:flex; gap:10px; margin-top:14px; flex-shrink:0; }
   .btn-clear { flex:1; padding:14px; font-size:15px; font-family:inherit; color:#1a1a1a; background:#fff; border:1.5px solid #1a1a1a; border-radius:6px; cursor:pointer; }
   .btn-done { flex:2; padding:14px; font-size:15px; font-weight:700; font-family:inherit; color:#fff; background:#1a1a1a; border:none; border-radius:6px; cursor:pointer; }
@@ -196,8 +196,8 @@ function submitForm(){
     applyDate: applyStr
   };
 
-  // 送到 Google 表單（背景送出，不開新分頁）
-  var FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScDngcY1ObGDavvqnYZ5nsugJjDUu3JkOW5BgWqpKcE_-DPUA/formResponse';
+  // 送到 Apps Script（直接寫進試算表）
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcjqAOd8KzX67-pth6k-ISdaaAXPh_U4Ive-Qnhz5W74il_F14-yesQwibofC1SHXWzQ/exec';
   var p = new URLSearchParams({
     'entry.1768833960': gFormData.name,
     'entry.715392463':  gFormData.emp_id,
@@ -209,7 +209,7 @@ function submitForm(){
     'entry.592021884':  gFormData.stopDate === '—' ? '' : gFormData.stopDate,
     'entry.130869959':  gFormData.applyDate
   });
-  fetch(FORM_ACTION, {
+  fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -228,8 +228,10 @@ function initSigCanvas(){
   sigCanvas = document.getElementById('sigPad');
   var wrap = sigCanvas.parentElement;
   var dpr = window.devicePixelRatio || 1;
+  var canvasH = wrap.offsetHeight > 0 ? wrap.offsetHeight : 220;
   sigCanvas.width = wrap.offsetWidth * dpr;
-  sigCanvas.height = wrap.offsetHeight * dpr;
+  sigCanvas.height = canvasH * dpr;
+  sigCanvas.style.height = canvasH + 'px';
   ctx = sigCanvas.getContext('2d');
   ctx.scale(dpr, dpr);
   ctx.strokeStyle = '#1a1a1a';
